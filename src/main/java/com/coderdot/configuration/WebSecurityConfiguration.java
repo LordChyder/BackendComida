@@ -1,6 +1,11 @@
 package com.coderdot.configuration;
 
 import com.coderdot.filters.JwtRequestFilter;
+
+import io.jsonwebtoken.Claims;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,17 +35,14 @@ public class WebSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
-        return security.csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/signup", "/login").permitAll()
-                .and()
-                .authorizeHttpRequests().requestMatchers("/api/**")
-                .permitAll()
-                .anyRequest().permitAll()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+        return security.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/signup", "/login").permitAll())
+                .authorizeHttpRequests(requests -> requests.requestMatchers("/api/**")
+                        .authenticated()
+                        .anyRequest().permitAll())
+                .sessionManagement(management -> management
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

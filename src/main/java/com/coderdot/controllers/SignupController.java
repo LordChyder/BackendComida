@@ -1,7 +1,7 @@
 package com.coderdot.controllers;
 
-import com.coderdot.dto.SignupRequest;
-import com.coderdot.entities.Customer;
+import com.coderdot.dto.request.SignupRequest;
+import com.coderdot.entities.User;
 import com.coderdot.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,12 +23,12 @@ public class SignupController {
     }
 
     @PostMapping
-    public ResponseEntity<?> signupCustomer(@RequestBody SignupRequest signupRequest) {
-        Customer createdCustomer = authService.createCustomer(signupRequest);
-        if (createdCustomer != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdCustomer);
+    public ResponseEntity<?> signupUser(@RequestBody SignupRequest signupRequest) {
+        User createdUser = authService.createUser(signupRequest);
+        if (createdUser != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to create customer");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to create User");
         }
     }
 

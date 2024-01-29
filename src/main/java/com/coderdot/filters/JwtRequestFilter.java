@@ -1,6 +1,6 @@
 package com.coderdot.filters;
 
-import com.coderdot.services.jwt.CustomerServiceImpl;
+import com.coderdot.services.jwt.UserServiceImpl;
 import com.coderdot.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,11 +19,11 @@ import java.io.IOException;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-    private final CustomerServiceImpl customerService;
+    private final UserServiceImpl customerService;
     private final JwtUtil jwtUtil;
 
     @Autowired
-    public JwtRequestFilter(CustomerServiceImpl customerService, JwtUtil jwtUtil) {
+    public JwtRequestFilter(UserServiceImpl customerService, JwtUtil jwtUtil) {
         this.customerService = customerService;
         this.jwtUtil = jwtUtil;
     }

@@ -1,8 +1,8 @@
 package com.coderdot.services;
 
-import com.coderdot.dto.SignupRequest;
-import com.coderdot.entities.Customer;
+import com.coderdot.dto.request.SignupRequest;
+import com.coderdot.entities.User;
 
 public interface AuthService {
-    Customer createCustomer(SignupRequest signupRequest);
+    User createUser(SignupRequest signupRequest);
 }

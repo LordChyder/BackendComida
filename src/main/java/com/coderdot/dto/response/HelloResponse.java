@@ -1,4 +1,4 @@
-package com.coderdot.dto;
+package com.coderdot.dto.response;
 
 public record HelloResponse(String message) {
 }
