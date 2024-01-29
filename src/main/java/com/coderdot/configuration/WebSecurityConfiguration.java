@@ -2,11 +2,6 @@ package com.coderdot.configuration;
 
 import com.coderdot.filters.JwtRequestFilter;
 
-import io.jsonwebtoken.Claims;
-
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,7 +22,6 @@ public class WebSecurityConfiguration {
 
     private final JwtRequestFilter jwtRequestFilter;
 
-    @Autowired
     public WebSecurityConfiguration(JwtRequestFilter jwtRequestFilter) {
         this.jwtRequestFilter = jwtRequestFilter;
     }

@@ -4,7 +4,6 @@ import com.coderdot.dto.request.SignupRequest;
 import com.coderdot.entities.User;
 import com.coderdot.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,6 @@ public class AuthServiceImpl implements AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
     public AuthServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder) {
         this._repository = repository;
         this.passwordEncoder = passwordEncoder;

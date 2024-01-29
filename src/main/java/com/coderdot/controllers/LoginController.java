@@ -3,13 +3,11 @@ package com.coderdot.controllers;
 import com.coderdot.dto.request.LoginRequest;
 import com.coderdot.dto.response.LoginResponse;
 import com.coderdot.entities.Perfil;
-import com.coderdot.services.UserService;
+import com.coderdot.services.User.UserService;
 import com.coderdot.services.jwt.UserServiceImpl;
 import com.coderdot.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -36,7 +34,6 @@ public class LoginController {
     private final JwtUtil jwtUtil;
 
 
-    @Autowired
     public LoginController(AuthenticationManager authenticationManager, UserServiceImpl customerService, UserService vservice, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.customerService = customerService;

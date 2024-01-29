@@ -1,7 +1,8 @@
 package com.coderdot.entities;
 
-import java.util.Optional;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,6 +26,7 @@ public class User {
 
     private String email;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<PerfilUser> perfiles;
 

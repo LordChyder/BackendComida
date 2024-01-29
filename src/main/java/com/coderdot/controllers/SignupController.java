@@ -3,7 +3,6 @@ package com.coderdot.controllers;
 import com.coderdot.dto.request.SignupRequest;
 import com.coderdot.entities.User;
 import com.coderdot.services.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +16,6 @@ public class SignupController {
 
     private final AuthService authService;
 
-    @Autowired
     public SignupController(AuthService authService) {
         this.authService = authService;
     }
