@@ -1,6 +1,7 @@
 package com.coderdot.dto.request;
 
-import com.coderdot.entities.Categoria;
+import org.springframework.lang.NonNull;
+
 import com.coderdot.entities.Establecimiento;
 import com.coderdot.entities.Sucursal;
 
@@ -63,7 +64,7 @@ public class SucursalRequest {
         this.establecimientoId = establecimientoId;
     }
 
-    public Sucursal toSucursal() {
+    public @NonNull Sucursal toSucursal() {
         Sucursal sucursal = new Sucursal();
         sucursal.setAdministrador(this.administrador);
         sucursal.setCoordinador(this.coordinador);

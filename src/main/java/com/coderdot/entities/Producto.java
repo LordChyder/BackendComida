@@ -25,6 +25,10 @@ public class Producto {
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
+    public Long getId() {
+        return id;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -63,5 +67,9 @@ public class Producto {
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
     }
 }
