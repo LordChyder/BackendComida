@@ -25,6 +25,14 @@ public class Permiso {
        this.nombre = nombre;
    }
 
+   public Long getId() {
+       return id;
+   }
+
+   public void setId(Long id) {
+       this.id = id;
+   }
+
    public String getCodigo() {
        return codigo;
    }

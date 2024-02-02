@@ -17,6 +17,14 @@ public class Perfil {
     private String nombre;
     private String codigo;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
    public void setCodigo(String codigo) {
        this.codigo = codigo;
    }
