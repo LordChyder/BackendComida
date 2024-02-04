@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.coderdot.entities.Perfil;
 import com.coderdot.entities.Permiso;
 import com.coderdot.entities.PermisoPerfil;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.PermisoPerfilRepository;
 import com.coderdot.repository.PermisoRepository;
 import com.coderdot.repository.PerfilRepository;
@@ -21,11 +22,14 @@ public class PermisoPerfilService implements IPermisoPerfilService {
     private final PermisoPerfilRepository _repository;
     private final PerfilRepository _perfilRepository;
     private final PermisoRepository _permisoRepository;
+    private final MessageResult _messageResult;
     
-    public PermisoPerfilService(PermisoPerfilRepository repository, PerfilRepository perfilRepository, PermisoRepository permisoRepository) {
+    public PermisoPerfilService(PermisoPerfilRepository repository, PerfilRepository perfilRepository, 
+    PermisoRepository permisoRepository, MessageResult messageResult) {
         this._repository = repository;
         this._perfilRepository = perfilRepository;
         this._permisoRepository = permisoRepository;
+        this._messageResult = messageResult;
     }
 
     public List<PermisoPerfil> getAll() {
@@ -94,5 +98,23 @@ public class PermisoPerfilService implements IPermisoPerfilService {
         } else {
             return false;
         }
+    }
+
+    public boolean deleteByPermisoAndPerfil(@NonNull Long userId, @NonNull Long perfilId) {
+        _repository.deleteByPermisoIdAndPerfilId(userId, perfilId);
+
+        return true; // O devuelve el resultado deseado
+    }
+
+    public List<Permiso> getPermisosByPerfilId(Long perfilId) {
+        return _repository.findPermisosByPerfilId(perfilId);
+    }
+
+    public List<Permiso> getPermisosNotInPerfil(Long perfilId) {
+        return _repository.findPermisosNotInPerfil(perfilId);
+    }
+
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

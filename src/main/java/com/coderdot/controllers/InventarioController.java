@@ -2,7 +2,6 @@ package com.coderdot.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,11 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.InventarioRequest;
 import com.coderdot.entities.Inventario;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.Inventario.InventarioService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/inventarios")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
@@ -47,33 +48,22 @@ public class InventarioController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody InventarioRequest  entity ) {
-        try {
-            _service.create(entity.toInventario());
-            return ResponseEntity.ok("Inventario creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el Inventario: " + e.getMessage());
-        }
+        boolean result = _service.create(entity.toInventario());
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id, @RequestBody InventarioRequest entity) {
         
-        Inventario ent = new Inventario();
-        BeanUtils.copyProperties(entity, entity.toInventario());
+        boolean result = _service.update(id, entity.toInventario());
 
-        boolean result = _service.update(id, ent);
-
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    

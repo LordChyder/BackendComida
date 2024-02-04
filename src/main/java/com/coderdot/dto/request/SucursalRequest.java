@@ -12,7 +12,7 @@ public class SucursalRequest {
     private String administrador;
     private String coordinador;
     private String telefono;
-    private Long establecimientoId;
+    private Long establecimiento_id;
 
 
     public String getAdministrador() {
@@ -35,8 +35,8 @@ public class SucursalRequest {
         return telefono;
     }
 
-    public Long getEstablecimientoId() {
-        return establecimientoId;
+    public Long getEstablecimiento_id() {
+        return establecimiento_id;
     }
 
     
@@ -60,8 +60,8 @@ public class SucursalRequest {
         this.telefono = telefono;
     }
 
-    public void setEstablecimientoId(Long establecimientoId) {
-        this.establecimientoId = establecimientoId;
+    public void setEstablecimiento_id(Long establecimiento_id) {
+        this.establecimiento_id = establecimiento_id;
     }
 
     public @NonNull Sucursal toSucursal() {
@@ -73,7 +73,7 @@ public class SucursalRequest {
         sucursal.setTelefono(this.telefono);
         
         Establecimiento establecimiento = new Establecimiento();
-        establecimiento.setId(this.establecimientoId);
+        establecimiento.setId(this.establecimiento_id);
         sucursal.setEstablecimiento(establecimiento);
 
         return sucursal;

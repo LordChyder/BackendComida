@@ -16,14 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.PermisoRequest;
 import com.coderdot.entities.Permiso;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.Permiso.PermisoService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/permisos")
-@PreAuthorize("@customAuthorizationFilter.hasPermission('ALMACEN')")
+@PreAuthorize("@customAuthorizationFilter.hasPermission('SEGURIDAD')")
 @SecurityRequirement(name = "bearerAuth")
 public class PermisoController {
 
@@ -52,10 +54,11 @@ public class PermisoController {
             Permiso ent = new Permiso();
             BeanUtils.copyProperties(entity, ent);
 
-            _service.create(ent);
-            return ResponseEntity.ok("Permiso creado exitosamente");
+            _service.create(ent);        
+            return OperationResult.getOperationResult(true, this._service.getResult().getMessages());
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el Permiso: " + e.getMessage());
+            return OperationResult.getOperationResult(false, this._service.getResult().getMessages());
         }
     }
 
@@ -66,18 +69,15 @@ public class PermisoController {
         BeanUtils.copyProperties(entity, ent);
 
         boolean result = _service.update(id, ent);
+        
+        return OperationResult.getOperationResult(result, this._service.getResult().getMessages());
 
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    

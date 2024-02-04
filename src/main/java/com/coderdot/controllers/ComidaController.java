@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.ComidaRequest;
 import com.coderdot.entities.Comida;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.Comida.ComidaService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/comidas")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('ALMACEN')")
@@ -47,16 +49,11 @@ public class ComidaController {
 
     @PostMapping
     public ResponseEntity<?> create(@NonNull @RequestBody ComidaRequest  entity ) {
-        try {
-            
-            Comida ent = new Comida();
-            BeanUtils.copyProperties(entity, ent);
+        Comida ent = new Comida();
+        BeanUtils.copyProperties(entity, ent);
 
-            _service.create(ent);
-            return ResponseEntity.ok("Comida creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el Comida: " + e.getMessage());
-        }
+        boolean result = _service.create(ent);
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
@@ -67,17 +64,13 @@ public class ComidaController {
 
         boolean result = _service.update(id, ent);
 
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    

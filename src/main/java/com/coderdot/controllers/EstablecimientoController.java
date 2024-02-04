@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.EstablecimientoRequest;
 import com.coderdot.entities.Establecimiento;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.Establecimiento.EstablecimientoService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/establecimientos")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
@@ -47,16 +49,12 @@ public class EstablecimientoController {
 
     @PostMapping
     public ResponseEntity<?> create(@NonNull @RequestBody EstablecimientoRequest  entity ) {
-        try {
-            
-            Establecimiento ent = new Establecimiento();
-            BeanUtils.copyProperties(entity, ent);
+        
+        Establecimiento ent = new Establecimiento();
+        BeanUtils.copyProperties(entity, ent);
 
-            _service.create(ent);
-            return ResponseEntity.ok("Establecimiento creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el Establecimiento: " + e.getMessage());
-        }
+        Boolean result = _service.create(ent);
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
@@ -67,17 +65,13 @@ public class EstablecimientoController {
 
         boolean result = _service.update(id, ent);
 
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    

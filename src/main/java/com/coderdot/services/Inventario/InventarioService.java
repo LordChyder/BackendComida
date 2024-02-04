@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Sucursal;
+import com.coderdot.models.MessageResult;
 import com.coderdot.entities.Inventario;
 import com.coderdot.repository.InventarioRepository;
 import com.coderdot.repository.SucursalRepository;
@@ -18,10 +19,13 @@ public class InventarioService implements IInventarioService {
 
     private final InventarioRepository _repository;
     private final SucursalRepository _sucursalRepository;
+    private final MessageResult _messageResult;
 
-    public InventarioService(InventarioRepository repository, SucursalRepository sucursalRepository) {
+    public InventarioService(InventarioRepository repository, SucursalRepository sucursalRepository, 
+    MessageResult messageResult) {
         this._repository = repository;
         this._sucursalRepository = sucursalRepository;
+        this._messageResult = messageResult;
     }
 
     public List<Inventario> getAll() {
@@ -78,5 +82,9 @@ public class InventarioService implements IInventarioService {
         } else {
             return false;
         }
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

@@ -7,15 +7,19 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Comida;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.ComidaRepository;
 
 @Service
 public class ComidaService implements IComidaService {
 
     private final ComidaRepository _repository;
+    private final MessageResult _messageResult;
 
-    public ComidaService(ComidaRepository repository) {
+    public ComidaService(ComidaRepository repository, 
+    MessageResult messageResult) {
         this._repository = repository;
+        this._messageResult = messageResult;
     }
 
     public List<Comida> getAll() {
@@ -58,5 +62,9 @@ public class ComidaService implements IComidaService {
         } else {
             return false;
         }
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Establecimiento;
 import com.coderdot.entities.Sucursal;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.EstablecimientoRepository;
 import com.coderdot.repository.SucursalRepository;
 
@@ -18,10 +19,13 @@ public class SucursalService implements ISucursalService {
 
     private final SucursalRepository _repository;
     private final EstablecimientoRepository _establecimientoRepository;
+    private final MessageResult _messageResult;
 
-    public SucursalService(SucursalRepository repository, EstablecimientoRepository establecimientoRepository) {
+    public SucursalService(SucursalRepository repository, EstablecimientoRepository establecimientoRepository, 
+        MessageResult messageResult) {
         this._repository = repository;
         this._establecimientoRepository = establecimientoRepository;
+        this._messageResult = messageResult;
     }
 
     public List<Sucursal> getAll() {
@@ -35,7 +39,6 @@ public class SucursalService implements ISucursalService {
     public boolean create(@NonNull Sucursal entity) {
 
         try {
-
             Long establecimientoId = entity.getEstablecimiento().getId() != null ? entity.getEstablecimiento().getId() : 0;
     
             Establecimiento establecimiento = _establecimientoRepository.findById(establecimientoId)
@@ -81,5 +84,9 @@ public class SucursalService implements ISucursalService {
         } else {
             return false;
         }
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

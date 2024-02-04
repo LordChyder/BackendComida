@@ -10,7 +10,7 @@ public class CajaRequest {
 
     private String nombre;
     private String codigo;
-    private Long sucursalId;
+    private Long sucursal_id;
 
     public String getCodigo() {
         return codigo;
@@ -20,8 +20,8 @@ public class CajaRequest {
         return nombre;
     }
 
-    public Long getSucursalId() {
-        return sucursalId;
+    public Long getSucursal_id() {
+        return sucursal_id;
     }
 
     public void setCodigo(String codigo) {
@@ -32,8 +32,8 @@ public class CajaRequest {
         this.nombre = nombre;
     }
 
-    public void setSucursalId(Long sucursalId) {
-        this.sucursalId = sucursalId;
+    public void setSucursal_id(Long sucursal_id) {
+        this.sucursal_id = sucursal_id;
     }
 
     public @NonNull Caja toCaja() {
@@ -42,7 +42,7 @@ public class CajaRequest {
         caja.setNombre(this.nombre);
         
         Sucursal sucursal = new Sucursal();
-        sucursal.setId(this.sucursalId);
+        sucursal.setId(this.sucursal_id);
 
         caja.setSucursal(sucursal);
 

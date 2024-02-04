@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.SignupRequest;
+import com.coderdot.models.OperationResult;
 import com.coderdot.models.UserSummary;
 import com.coderdot.services.User.UserService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/users")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('SEGURIDAD')")
@@ -47,28 +49,25 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody SignupRequest user) {
+    public ResponseEntity<OperationResult> create(@RequestBody SignupRequest user) {
         boolean result = userService.createUser(user);
-        return ResponseEntity.ok(result);
+        
+        return OperationResult.getOperationResult(result, userService.getResult().getMessages());
     }
 
     // Actualizar un usuario existente
     @PutMapping("/{id}")
-    public ResponseEntity<Boolean> updateUser(@NonNull @PathVariable Long id,  @RequestBody SignupRequest user) {
+    public ResponseEntity<OperationResult> updateUser(@NonNull @PathVariable Long id,  @RequestBody SignupRequest user) {
         boolean result = userService.updateUser(id, user);
 
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, userService.getResult().getMessages());
     }
 
     // Eliminar un usuario por ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@NonNull @PathVariable Long id) {
-        if (userService.deleteUser(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<OperationResult> deleteUser(@NonNull @PathVariable Long id) {
+        boolean result = userService.deleteUser(id);
+
+        return OperationResult.getOperationResult(result, userService.getResult().getMessages());
     }
 }    

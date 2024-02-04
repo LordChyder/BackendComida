@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Sucursal;
+import com.coderdot.models.MessageResult;
 import com.coderdot.entities.Mesa;
 import com.coderdot.repository.MesaRepository;
 import com.coderdot.repository.SucursalRepository;
@@ -18,10 +19,13 @@ public class MesaService implements IMesaService {
 
     private final MesaRepository _repository;
     private final SucursalRepository _sucursalRepository;
+    private final MessageResult _messageResult;
 
-    public MesaService(MesaRepository repository, SucursalRepository sucursalRepository) {
+    public MesaService(MesaRepository repository, SucursalRepository sucursalRepository, 
+    MessageResult messageResult) {
         this._repository = repository;
         this._sucursalRepository = sucursalRepository;
+        this._messageResult = messageResult;
     }
 
     public List<Mesa> getAll() {
@@ -77,5 +81,13 @@ public class MesaService implements IMesaService {
         } else {
             return false;
         }
+    }
+
+    public List<Mesa> getMesasPorSucursal(Long sucursalId) {
+        return _repository.findBySucursalId(sucursalId);
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

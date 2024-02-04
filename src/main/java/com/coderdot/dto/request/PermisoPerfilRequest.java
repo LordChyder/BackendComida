@@ -11,6 +11,21 @@ public class PermisoPerfilRequest {
     private Long permisoId;
     private Long perfilId;
 
+    public Long getPerfilId() {
+        return perfilId;
+    }
+
+    public Long getPermisoId() {
+        return permisoId;
+    }
+
+    public void setPerfilId(Long perfilId) {
+        this.perfilId = perfilId;
+    }
+
+    public void setPermisoId(Long permisoId) {
+        this.permisoId = permisoId;
+    }
 
     public @NonNull PermisoPerfil toPermisoPerfil() {
         PermisoPerfil entradaMaterial = new PermisoPerfil();

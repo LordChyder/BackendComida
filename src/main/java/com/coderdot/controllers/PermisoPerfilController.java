@@ -15,15 +15,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.PermisoPerfilRequest;
+import com.coderdot.entities.Permiso;
 import com.coderdot.entities.PermisoPerfil;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.PermisoPerfil.PermisoPerfilService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/permisos-perfiles")
-@PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
+@PreAuthorize("@customAuthorizationFilter.hasPermission('SEGURIDAD')")
 @SecurityRequirement(name = "bearerAuth")
 public class PermisoPerfilController {
 
@@ -47,12 +50,8 @@ public class PermisoPerfilController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody PermisoPerfilRequest  entity ) {
-        try {
-            _service.create(entity.toPermisoPerfil());
-            return ResponseEntity.ok("PermisoPerfil creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el PermisoPerfil: " + e.getMessage());
-        }
+        Boolean result = _service.create(entity.toPermisoPerfil());
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
@@ -62,18 +61,32 @@ public class PermisoPerfilController {
         BeanUtils.copyProperties(entity, entity.toPermisoPerfil());
 
         boolean result = _service.update(id, ent);
-
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
+
+    @DeleteMapping("/{permisoId}/{perfilId}")
+    public ResponseEntity<Void> deleteByPermisoAndPerfil(@NonNull @PathVariable Long permisoId, @NonNull @PathVariable Long perfilId) {
+        boolean result = _service.deleteByPermisoAndPerfil(permisoId, perfilId);
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
+    
+    @GetMapping("/permiso/{perfilId}")
+    public ResponseEntity<List<Permiso>> getPermisosByPerfilId(@PathVariable Long perfilId) {
+        List<Permiso> permisos = _service.getPermisosByPerfilId(perfilId);
+        return ResponseEntity.ok(permisos);
+    }
+
+    @GetMapping("/permiso/{perfilId}/no-tiene")
+    public ResponseEntity<List<Permiso>> getPermisosNotInPerfil(@PathVariable Long perfilId) {
+        List<Permiso> permisos = _service.getPermisosNotInPerfil(perfilId);
+        return ResponseEntity.ok(permisos);
     }
 }    

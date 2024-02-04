@@ -7,15 +7,18 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Perfil;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.PerfilRepository;
 
 @Service
 public class PerfilService implements IPerfilService {
 
     private final PerfilRepository _repository;
+    private final MessageResult _messageResult;
 
-    public PerfilService(PerfilRepository repository) {
+    public PerfilService(PerfilRepository repository, MessageResult messageResult) {
         this._repository = repository;
+        this._messageResult = messageResult;
     }
 
     public List<Perfil> getAll() {
@@ -57,5 +60,9 @@ public class PerfilService implements IPerfilService {
         } else {
             return false;
         }
+    }
+
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

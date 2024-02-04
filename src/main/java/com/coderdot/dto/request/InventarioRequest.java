@@ -11,14 +11,14 @@ public class InventarioRequest {
 
     private String nombre;
     private String ubicacion;
-    private Long sucursalId;
+    private Long sucursal_id;
 
     public String getNombre() {
         return nombre;
     }
 
-    public Long getSucursalId() {
-        return sucursalId;
+    public Long getSucursal_id() {
+        return sucursal_id;
     }
 
     public String getUbicacion() {
@@ -33,8 +33,8 @@ public class InventarioRequest {
         this.ubicacion = ubicacion;
     }
 
-    public void setSucursalId(Long sucursalId) {
-        this.sucursalId = sucursalId;
+    public void setSucursal_id(Long sucursal_id) {
+        this.sucursal_id = sucursal_id;
     }
 
     public @NonNull Inventario toInventario() {
@@ -43,7 +43,7 @@ public class InventarioRequest {
         inventario.setUbicacion(this.ubicacion);
         
         Sucursal sucursal = new Sucursal();
-        sucursal.setId(this.sucursalId);
+        sucursal.setId(this.sucursal_id);
 
         inventario.setSucursal(sucursal);
 

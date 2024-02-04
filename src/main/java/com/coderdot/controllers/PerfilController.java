@@ -16,14 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.PerfilRequest;
 import com.coderdot.entities.Perfil;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.Perfil.PerfilService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/perfiles")
-@PreAuthorize("@customAuthorizationFilter.hasPermission('ALMACEN')")
+@PreAuthorize("@customAuthorizationFilter.hasPermission('SEGURIDAD')")
 @SecurityRequirement(name = "bearerAuth")
 public class PerfilController {
 
@@ -46,16 +48,16 @@ public class PerfilController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@NonNull @RequestBody PerfilRequest  entity ) {
+    public ResponseEntity<Boolean> create(@NonNull @RequestBody PerfilRequest  entity ) {
         try {
             
             Perfil ent = new Perfil();
             BeanUtils.copyProperties(entity, ent);
 
             _service.create(ent);
-            return ResponseEntity.ok("Perfil creado exitosamente");
+            return OperationResult.getOperationResult(true, _service.getResult().getMessages());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el Perfil: " + e.getMessage());
+            return OperationResult.getOperationResult(false, _service.getResult().getMessages());
         }
     }
 
@@ -67,17 +69,13 @@ public class PerfilController {
 
         boolean result = _service.update(id, ent);
 
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    

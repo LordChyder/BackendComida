@@ -7,17 +7,19 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Establecimiento;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.EstablecimientoRepository;
 
 @Service
 public class EstablecimientoService implements IEstablecimientoService {
 
     private final EstablecimientoRepository _repository;
+    private final MessageResult _messageResult;
 
-    public EstablecimientoService(EstablecimientoRepository repository) {
+    public EstablecimientoService(EstablecimientoRepository repository, MessageResult messageResult) {
         this._repository = repository;
+        this._messageResult = messageResult;
     }
-
     public List<Establecimiento> getAll() {
         return _repository.findAll();
     }
@@ -63,5 +65,9 @@ public class EstablecimientoService implements IEstablecimientoService {
         } else {
             return false;
         }
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

@@ -15,15 +15,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.PerfilUserRequest;
+import com.coderdot.entities.Perfil;
 import com.coderdot.entities.PerfilUser;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.PerfilUser.PerfilUserService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/perfiles-users")
-@PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
+@PreAuthorize("@customAuthorizationFilter.hasPermission('SEGURIDAD')")
 @SecurityRequirement(name = "bearerAuth")
 public class PerfilUserController {
 
@@ -47,12 +50,9 @@ public class PerfilUserController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody PerfilUserRequest  entity ) {
-        try {
-            _service.create(entity.toPerfilUser());
-            return ResponseEntity.ok("PerfilUser creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el PerfilUser: " + e.getMessage());
-        }
+
+        boolean result = _service.create(entity.toPerfilUser());
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
@@ -63,17 +63,32 @@ public class PerfilUserController {
 
         boolean result = _service.update(id, ent);
 
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
+
+    @DeleteMapping("/{userId}/{perfilId}")
+    public ResponseEntity<Void> deleteByUserAndPermiso(@NonNull @PathVariable Long userId, @NonNull @PathVariable Long perfilId) {
+        boolean result = _service.deleteByUserAndPerfil(userId, perfilId);
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
+
+    @GetMapping("/usuario/{userId}")
+    public ResponseEntity<List<Perfil>> getPerfilesByUserId(@PathVariable Long userId) {
+        List<Perfil> perfiles = _service.getPerfilesByUserId(userId);
+        return ResponseEntity.ok(perfiles);
+    }
+
+    @GetMapping("/usuario/{userId}/no-tiene")
+    public ResponseEntity<List<Perfil>> getPerfilesNotInUser(@PathVariable Long userId) {
+        List<Perfil> perfiles = _service.getPerfilesNotInUser(userId);
+        return ResponseEntity.ok(perfiles);
     }
 }    

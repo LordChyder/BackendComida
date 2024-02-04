@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Sucursal;
+import com.coderdot.models.MessageResult;
 import com.coderdot.entities.Caja;
 import com.coderdot.repository.CajaRepository;
 import com.coderdot.repository.SucursalRepository;
@@ -18,10 +19,13 @@ public class CajaService implements ICajaService {
 
     private final CajaRepository _repository;
     private final SucursalRepository _sucursalRepository;
+    private final MessageResult _messageResult;
 
-    public CajaService(CajaRepository repository, SucursalRepository sucursalRepository) {
+    public CajaService(CajaRepository repository, SucursalRepository sucursalRepository, 
+    MessageResult messageResult) {
         this._repository = repository;
         this._sucursalRepository = sucursalRepository;
+        this._messageResult = messageResult;
     }
 
     public List<Caja> getAll() {
@@ -78,5 +82,9 @@ public class CajaService implements ICajaService {
         } else {
             return false;
         }
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.coderdot.entities.Perfil;
 import com.coderdot.entities.PerfilUser;
 import com.coderdot.entities.User;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.PerfilUserRepository;
 import com.coderdot.repository.UserRepository;
 import com.coderdot.repository.PerfilRepository;
@@ -21,11 +22,13 @@ public class PerfilUserService implements IPerfilUserService {
     private final PerfilUserRepository _repository;
     private final PerfilRepository _perfilRepository;
     private final UserRepository _userRepository;
+    private final MessageResult _messageResult;
     
-    public PerfilUserService(PerfilUserRepository repository, PerfilRepository perfilRepository, UserRepository userRepository) {
+    public PerfilUserService(PerfilUserRepository repository, PerfilRepository perfilRepository, UserRepository userRepository, MessageResult messageResult) {
         this._repository = repository;
         this._perfilRepository = perfilRepository;
         this._userRepository = userRepository;
+        this._messageResult = messageResult;
     }
 
     public List<PerfilUser> getAll() {
@@ -94,5 +97,23 @@ public class PerfilUserService implements IPerfilUserService {
         } else {
             return false;
         }
+    }
+
+    public List<Perfil> getPerfilesByUserId(Long userId) {
+        return _repository.findPerfilesByUserId(userId);
+    }
+
+    public List<Perfil> getPerfilesNotInUser(Long userId) {
+        return _repository.findPerfilesNotInUser(userId);
+    }
+
+    public boolean deleteByUserAndPerfil(@NonNull Long userId, @NonNull Long perfilId) {
+        _repository.deleteByUserIdAndPerfilId(userId, perfilId);
+
+        return true;
+    }
+
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

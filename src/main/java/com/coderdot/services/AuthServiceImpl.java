@@ -22,10 +22,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User createUser(SignupRequest signupRequest) {
-        //Check if User already exist
+        System.out.println("------------------------");
+        System.out.println(signupRequest.getUsername());
+        System.out.println(_repository.existsByUsername(signupRequest.getUsername()));
+        
         if (_repository.existsByUsername(signupRequest.getUsername())) {
             return null;
         }
+
 
         User user = new User();
         BeanUtils.copyProperties(signupRequest,user);

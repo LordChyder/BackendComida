@@ -7,15 +7,18 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Permiso;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.PermisoRepository;
 
 @Service
 public class PermisoService implements IPermisoService {
 
     private final PermisoRepository _repository;
+    private final MessageResult _messageResult;
 
-    public PermisoService(PermisoRepository repository) {
+    public PermisoService(PermisoRepository repository, MessageResult messageResult) {
         this._repository = repository;
+        this._messageResult = messageResult;
     }
 
     public List<Permiso> getAll() {
@@ -57,5 +60,9 @@ public class PermisoService implements IPermisoService {
         } else {
             return false;
         }
+    }
+
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }
