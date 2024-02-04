@@ -83,6 +83,10 @@ public class InventarioService implements IInventarioService {
             return false;
         }
     }
+
+    public List<Inventario> getInventarioBySucursalId(Long sucursalId) {
+        return _repository.findBySucursalId(sucursalId);
+    }
     
     public MessageResult getResult() {
         return this._messageResult;

@@ -2,7 +2,6 @@ package com.coderdot.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,22 +14,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.EntradaMaterialRequest;
+import com.coderdot.entities.Compra;
 import com.coderdot.entities.EntradaMaterial;
+import com.coderdot.models.OperationResult;
+import com.coderdot.services.Compra.CompraService;
 import com.coderdot.services.EntradaMaterial.EntradaMaterialService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/entrada-material")
-@PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
+@PreAuthorize("@customAuthorizationFilter.hasPermission('ALMACEN')")
 @SecurityRequirement(name = "bearerAuth")
 public class EntradaMaterialController {
 
     private final EntradaMaterialService _service;
+    private final CompraService _cService;
 
-    public EntradaMaterialController(EntradaMaterialService service) {
+    public EntradaMaterialController(EntradaMaterialService service, CompraService cService) {
         this._service = service;
+        this._cService = cService;
     }
 
     @GetMapping
@@ -47,33 +52,29 @@ public class EntradaMaterialController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody EntradaMaterialRequest  entity ) {
-        try {
-            _service.create(entity.toEntradaMaterial());
-            return ResponseEntity.ok("EntradaMaterial creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el EntradaMaterial: " + e.getMessage());
-        }
+        boolean result = _service.create(entity.toEntradaMaterial());
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id, @RequestBody EntradaMaterialRequest entity) {
         
-        EntradaMaterial ent = new EntradaMaterial();
-        BeanUtils.copyProperties(entity, entity.toEntradaMaterial());
-
-        boolean result = _service.update(id, ent);
-
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        boolean result = _service.update(id,  entity.toEntradaMaterial());
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
+
+    
+    @GetMapping("/get/no-entradas-y-aprobadas")
+    public List<Compra> obtenerComprasEntradaFalseYEstadoTrue() {
+        return _cService.obtenerComprasEntradaFalseYEstadoTrue();
     }
 }    

@@ -2,7 +2,6 @@ package com.coderdot.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -61,11 +60,7 @@ public class MesaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id, @RequestBody MesaRequest entity) {
-        
-        Mesa ent = new Mesa();
-        BeanUtils.copyProperties(entity, entity.toMesa());
-
-        boolean result = _service.update(id, ent);
+        boolean result = _service.update(id, entity.toMesa());
 
         return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }

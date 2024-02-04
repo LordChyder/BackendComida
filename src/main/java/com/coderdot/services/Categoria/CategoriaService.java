@@ -7,15 +7,19 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Categoria;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.CategoriaRepository;
 
 @Service
 public class CategoriaService implements ICategoriaService {
 
     private final CategoriaRepository _repository;
+    private final MessageResult _messageResult;
 
-    public CategoriaService(CategoriaRepository repository) {
+    public CategoriaService(CategoriaRepository repository, 
+    MessageResult messageResult) {
         this._repository = repository;
+        this._messageResult = messageResult;
     }
 
     public List<Categoria> getAll() {
@@ -56,5 +60,9 @@ public class CategoriaService implements ICategoriaService {
         } else {
             return false;
         }
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

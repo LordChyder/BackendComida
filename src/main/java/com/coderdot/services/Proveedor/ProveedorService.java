@@ -7,15 +7,18 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Proveedor;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.ProveedorRepository;
 
 @Service
 public class ProveedorService implements IProveedorService {
 
     private final ProveedorRepository _repository;
+    private final MessageResult _messageResult;
 
-    public ProveedorService(ProveedorRepository repository) {
+    public ProveedorService(ProveedorRepository repository, MessageResult messageResult) {
         this._repository = repository;
+        this._messageResult = messageResult;
     }
 
     public List<Proveedor> getAll() {
@@ -61,5 +64,9 @@ public class ProveedorService implements IProveedorService {
         } else {
             return false;
         }
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

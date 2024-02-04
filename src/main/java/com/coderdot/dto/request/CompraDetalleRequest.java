@@ -11,19 +11,19 @@ public class CompraDetalleRequest {
     private Float precio_unitario;
     private Integer unidad;
     private Float total;
-    private Long productoId;
-    private Long compraId;
+    private Long producto_id;
+    private Long compra_id;
 
-    public Long getCompraDetalleId() {
-        return compraId;
+    public Long getCompra_id() {
+        return compra_id;
     }
 
     public Float getPrecio_unitario() {
         return precio_unitario;
     }
 
-    public Long getProductoId() {
-        return productoId;
+    public Long getProducto_id() {
+        return producto_id;
     }
 
     public Float getTotal() {
@@ -34,16 +34,16 @@ public class CompraDetalleRequest {
         return unidad;
     }
     
-    public void setCompraDetalleId(Long compraId) {
-        this.compraId = compraId;
+    public void setCompra_id(Long compra_id) {
+        this.compra_id = compra_id;
     }
 
     public void setPrecio_unitario(Float precio_unitario) {
         this.precio_unitario = precio_unitario;
     }
 
-    public void setProductoId(Long productoId) {
-        this.productoId = productoId;
+    public void setProducto_id(Long producto_id) {
+        this.producto_id = producto_id;
     }
 
     public void setTotal(Float total) {
@@ -61,10 +61,10 @@ public class CompraDetalleRequest {
         compraDetalle.setTotal(this.total);
         
         Compra compra = new Compra();
-        compra.setId(this.compraId);
+        compra.setId(this.compra_id);
         
         Producto producto = new Producto();
-        producto.setId(this.productoId);
+        producto.setId(this.producto_id);
         
         compraDetalle.setProducto(producto);
         compraDetalle.setCompra(compra);

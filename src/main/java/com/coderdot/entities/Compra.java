@@ -28,16 +28,13 @@ public class Compra {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "caja_apertura_id", nullable = false)
-    private CajaApertura cajaApertura;
-
-    @ManyToOne
     @JoinColumn(name = "proveedor_id", nullable = false)
     private Proveedor proveedor;
 
-    public CajaApertura getCajaApertura() {
-        return cajaApertura;
-    }
+    @ManyToOne
+    @JoinColumn(name = "inventario_id", nullable = false)
+    private Inventario inventario;
+
 
     public Boolean getEntrada() {
         return entrada;
@@ -66,10 +63,10 @@ public class Compra {
     public Proveedor getProveedor() {
         return proveedor;
     }
-    
-    public void setCajaApertura(CajaApertura cajaApertura) {
-        this.cajaApertura = cajaApertura;
-    }
+
+   public Inventario getInventario() {
+       return inventario;
+   }
 
     public void setEntrada(Boolean entrada) {
         this.entrada = entrada;
@@ -97,5 +94,9 @@ public class Compra {
 
     public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
+    }
+
+    public void setInventario(Inventario inventario) {
+        this.inventario = inventario;
     }
 }

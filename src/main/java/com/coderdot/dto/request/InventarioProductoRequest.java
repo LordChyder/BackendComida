@@ -9,27 +9,27 @@ import com.coderdot.entities.Producto;
 public class InventarioProductoRequest {
 
     private Integer stock;
-    private Long inventarioId;
-    private Long productoId;
+    private Long inventario_id;
+    private Long producto_id;
 
-    public Long getInventarioId() {
-        return inventarioId;
+    public Long getInventario_id() {
+        return inventario_id;
     }
 
-    public Long getProductoId() {
-        return productoId;
+    public Long getProducto_id() {
+        return producto_id;
     }
 
     public Integer getStock() {
         return stock;
     }
     
-    public void setInventarioId(Long inventarioId) {
-        this.inventarioId = inventarioId;
+    public void setInventario_id(Long inventario_id) {
+        this.inventario_id = inventario_id;
     }
 
-    public void setProductoId(Long productoId) {
-        this.productoId = productoId;
+    public void setProducto_id(Long producto_id) {
+        this.producto_id = producto_id;
     }
 
     public void setStock(Integer stock) {
@@ -41,10 +41,10 @@ public class InventarioProductoRequest {
         inventarioProducto.setStock(this.stock);
         
         Inventario inventario = new Inventario();
-        inventario.setId(this.inventarioId);
+        inventario.setId(this.inventario_id);
         
         Producto producto = new Producto();
-        producto.setId(this.productoId);
+        producto.setId(this.producto_id);
 
         inventarioProducto.setInventario(inventario);
         inventarioProducto.setProducto(producto);

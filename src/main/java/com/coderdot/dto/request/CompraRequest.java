@@ -5,9 +5,9 @@ import java.util.Date;
 import org.springframework.lang.NonNull;
 
 import com.coderdot.entities.User;
-import com.coderdot.entities.CajaApertura;
 import com.coderdot.entities.Compra;
 import com.coderdot.entities.Proveedor;
+import com.coderdot.entities.Inventario;
 
 public class CompraRequest {
 
@@ -15,12 +15,16 @@ public class CompraRequest {
     private Number total;
     private Boolean estado;
     private Boolean entrada;
-    private Long userId;
-    private Long cajaAperturaId;
-    private Long proveedorId;
+    private Long user_id;
+    private Long proveedor_id;
+    private Long inventario_id;
 
-    public Long getCajaAperturaId() {
-        return cajaAperturaId;
+    public Long getInventario_id() {
+        return inventario_id;
+    }
+
+    public void setInventario_id(Long inventario_id) {
+        this.inventario_id = inventario_id;
     }
 
     public Boolean getEntrada() {
@@ -31,8 +35,8 @@ public class CompraRequest {
         return estado;
     }
 
-    public Long getProveedorId() {
-        return proveedorId;
+    public Long getProveedor_id() {
+        return proveedor_id;
     }
 
     public Date getFecha() {
@@ -43,17 +47,14 @@ public class CompraRequest {
         return total;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getUser_id() {
+        return user_id;
     }
 
-    public void setProveedorId(Long proveedorId) {
-        this.proveedorId = proveedorId;
+    public void setProveedor_id(Long proveedor_id) {
+        this.proveedor_id = proveedor_id;
     }
     
-    public void setCajaAperturaId(Long cajaAperturaId) {
-        this.cajaAperturaId = cajaAperturaId;
-    }
 
     public void setEntrada(Boolean entrada) {
         this.entrada = entrada;
@@ -71,8 +72,8 @@ public class CompraRequest {
         this.total = total;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
     }
 
     public @NonNull Compra toCompra() {
@@ -83,17 +84,17 @@ public class CompraRequest {
         compra.setTotal(this.total);
         
         User user = new User();
-        user.setId(this.userId);
-        
-        CajaApertura cajaAperturaId = new CajaApertura();
-        cajaAperturaId.setId(this.cajaAperturaId);
+        user.setId(this.user_id);
         
         Proveedor proveedor = new Proveedor();
-        proveedor.setId(this.proveedorId);
+        proveedor.setId(this.proveedor_id);
+        
+        Inventario inventario = new Inventario();
+        inventario.setId(this.inventario_id);
 
         compra.setUser(user);
+        compra.setInventario(inventario);
         compra.setProveedor(proveedor);
-        compra.setCajaApertura(cajaAperturaId);
 
         return compra;
     }

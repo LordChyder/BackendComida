@@ -5,12 +5,15 @@ import java.util.Optional;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.coderdot.entities.User;
-import com.coderdot.entities.CajaApertura;
+import com.coderdot.models.MessageResult;
 import com.coderdot.entities.Compra;
+import com.coderdot.entities.Inventario;
 import com.coderdot.entities.Proveedor;
 import com.coderdot.repository.CompraRepository;
+import com.coderdot.repository.InventarioRepository;
 import com.coderdot.repository.ProveedorRepository;
 import com.coderdot.repository.CajaAperturaRepository;
 import com.coderdot.repository.UserRepository;
@@ -22,15 +25,18 @@ public class CompraService implements ICompraService {
 
     private final CompraRepository _repository;
     private final UserRepository _userRepository;
-    private final CajaAperturaRepository _cajaAperturaRepository;
     private final ProveedorRepository _proveedorRepository;
+    private final InventarioRepository _inventarioRepository;
+    private final MessageResult _messageResult;
     
-    public CompraService(CompraRepository repository, UserRepository userRepository
-    , CajaAperturaRepository cajaAperturaRepository, ProveedorRepository proveedorRepository) {
+    public CompraService(CompraRepository repository, UserRepository userRepository, 
+    CajaAperturaRepository cajaAperturaRepository, ProveedorRepository proveedorRepository, InventarioRepository inventarioRepository,  
+    MessageResult messageResult) {
         this._repository = repository;
         this._userRepository = userRepository;
-        this._cajaAperturaRepository = cajaAperturaRepository;
+        this._messageResult = messageResult;
         this._proveedorRepository = proveedorRepository;
+        this._inventarioRepository = inventarioRepository;
     }
 
     public List<Compra> getAll() {
@@ -53,15 +59,15 @@ public class CompraService implements ICompraService {
     
             Proveedor proveedor = _proveedorRepository.findById(proveedor_id)
                 .orElseThrow(() -> new EntityNotFoundException("User no encontrada con id: " +proveedor_id));
-    
-            Long inventario_id = entity.getUser().getId() != null ? entity.getUser().getId() : 0;
-    
-            CajaApertura inventario = _cajaAperturaRepository.findById(inventario_id)
-                .orElseThrow(() -> new EntityNotFoundException("CajaApertura no encontrada con id: " +inventario_id));
+
+            Long inventario_id = entity.getProveedor().getId() != null ? entity.getProveedor().getId() : 0;
+
+            Inventario inventario = _inventarioRepository.findById(inventario_id)
+                .orElseThrow(() -> new EntityNotFoundException("Inventario no encontrada con id: " +inventario_id));
     
             entity.setUser(user);
-            entity.setCajaApertura(inventario);
             entity.setProveedor(proveedor);
+            entity.setInventario(inventario);
 
             _repository.save(entity);
             return true;
@@ -81,14 +87,14 @@ public class CompraService implements ICompraService {
         Proveedor proveedor = _proveedorRepository.findById(proveedor_id)
             .orElseThrow(() -> new EntityNotFoundException("User no encontrada con id: " +proveedor_id));
 
-        Long inventario_id = entity.getUser().getId() != null ? entity.getUser().getId() : 0;
+        Long inventario_id = entity.getProveedor().getId() != null ? entity.getProveedor().getId() : 0;
 
-        CajaApertura inventario = _cajaAperturaRepository.findById(inventario_id)
-            .orElseThrow(() -> new EntityNotFoundException("CajaApertura no encontrada con id: " +inventario_id));
+        Inventario inventario = _inventarioRepository.findById(inventario_id)
+            .orElseThrow(() -> new EntityNotFoundException("Inventario no encontrada con id: " +inventario_id));
 
         entity.setUser(user);
-        entity.setCajaApertura(inventario);
         entity.setProveedor(proveedor);
+        entity.setInventario(inventario);
 
         try {
             _repository.findById(id).map(existingEntity -> {
@@ -97,7 +103,6 @@ public class CompraService implements ICompraService {
                 existingEntity.setFecha(entity.getFecha());
                 existingEntity.setTotal(entity.getTotal());
                 existingEntity.setUser(entity.getUser());
-                existingEntity.setCajaApertura(entity.getCajaApertura());
                 existingEntity.setProveedor(entity.getProveedor());
                 return _repository.save(existingEntity);
             });
@@ -115,5 +120,20 @@ public class CompraService implements ICompraService {
         } else {
             return false;
         }
+    }
+
+    @Transactional
+    public boolean setClose(Long compraId) {
+        _repository.actualizarEstado(compraId);
+        
+        return true;
+    }
+    
+    public List<Compra> obtenerComprasEntradaFalseYEstadoTrue() {
+        return _repository.findByEntradaFalseAndEstadoTrue();
+    }
+
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

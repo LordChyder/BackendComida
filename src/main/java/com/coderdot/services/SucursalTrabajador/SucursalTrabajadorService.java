@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.coderdot.entities.Sucursal;
 import com.coderdot.entities.SucursalTrabajador;
 import com.coderdot.entities.User;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.SucursalTrabajadorRepository;
 import com.coderdot.repository.SucursalRepository;
 import com.coderdot.repository.UserRepository;
@@ -21,11 +22,14 @@ public class SucursalTrabajadorService implements ISucursalTrabajadorService {
     private final SucursalTrabajadorRepository _repository;
     private final UserRepository _userRepository;
     private final SucursalRepository _sucursalRepository;
+    private final MessageResult _messageResult;
     
-    public SucursalTrabajadorService(SucursalTrabajadorRepository repository, UserRepository userRepository, SucursalRepository sucursalRepository) {
+    public SucursalTrabajadorService(SucursalTrabajadorRepository repository, UserRepository userRepository, 
+    MessageResult messageResult, SucursalRepository sucursalRepository) {
         this._repository = repository;
         this._userRepository = userRepository;
         this._sucursalRepository = sucursalRepository;
+        this._messageResult = messageResult;
     }
 
     public List<SucursalTrabajador> getAll() {
@@ -94,5 +98,13 @@ public class SucursalTrabajadorService implements ISucursalTrabajadorService {
         } else {
             return false;
         }
+    }
+
+    public List<SucursalTrabajador> getSucursalTrabajadorPorSucursal(Long sucursalId) {
+        return _repository.findBySucursalId(sucursalId);
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

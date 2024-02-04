@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.ProveedorRequest;
 import com.coderdot.entities.Proveedor;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.Proveedor.ProveedorService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/proveedores")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('COMPRA')")
@@ -47,16 +49,12 @@ public class ProveedorController {
 
     @PostMapping
     public ResponseEntity<?> create(@NonNull @RequestBody ProveedorRequest  entity ) {
-        try {
-            
-            Proveedor ent = new Proveedor();
-            BeanUtils.copyProperties(entity, ent);
+        Proveedor ent = new Proveedor();
+        BeanUtils.copyProperties(entity, ent);
 
-            _service.create(ent);
-            return ResponseEntity.ok("Proveedor creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el Proveedor: " + e.getMessage());
-        }
+        boolean result = _service.create(ent);
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
@@ -67,17 +65,13 @@ public class ProveedorController {
 
         boolean result = _service.update(id, ent);
 
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    

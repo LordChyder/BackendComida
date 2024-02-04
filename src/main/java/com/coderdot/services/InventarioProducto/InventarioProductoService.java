@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Producto;
+import com.coderdot.models.MessageResult;
 import com.coderdot.entities.Inventario;
 import com.coderdot.entities.InventarioProducto;
 import com.coderdot.repository.InventarioProductoRepository;
@@ -21,11 +22,15 @@ public class InventarioProductoService implements IInventarioProductoService {
     private final InventarioProductoRepository _repository;
     private final ProductoRepository _productoRepository;
     private final InventarioRepository _inventarioRepository;
+    private final MessageResult _messageResult;
     
-    public InventarioProductoService(InventarioProductoRepository repository, ProductoRepository productoRepository, InventarioRepository inventarioRepository) {
+    public InventarioProductoService(
+        InventarioProductoRepository repository, ProductoRepository productoRepository, InventarioRepository inventarioRepository, 
+    MessageResult messageResult) {
         this._repository = repository;
         this._productoRepository = productoRepository;
         this._inventarioRepository = inventarioRepository;
+        this._messageResult = messageResult;
     }
 
     public List<InventarioProducto> getAll() {
@@ -44,7 +49,7 @@ public class InventarioProductoService implements IInventarioProductoService {
             Producto producto = _productoRepository.findById(producto_id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrada con id: " +producto_id));
 
-            Long inventario_id = entity.getProducto().getId() != null ? entity.getProducto().getId() : 0;
+            Long inventario_id = entity.getInventario().getId() != null ? entity.getInventario().getId() : 0;
     
             Inventario inventario = _inventarioRepository.findById(inventario_id)
                 .orElseThrow(() -> new EntityNotFoundException("Inventario no encontrada con id: " +inventario_id));
@@ -65,7 +70,7 @@ public class InventarioProductoService implements IInventarioProductoService {
         Producto producto = _productoRepository.findById(producto_id)
             .orElseThrow(() -> new EntityNotFoundException("Producto no encontrada con id: " +producto_id));
 
-        Long inventario_id = entity.getProducto().getId() != null ? entity.getProducto().getId() : 0;
+        Long inventario_id = entity.getInventario().getId() != null ? entity.getInventario().getId() : 0;
 
         Inventario inventario = _inventarioRepository.findById(inventario_id)
             .orElseThrow(() -> new EntityNotFoundException("Inventario no encontrada con id: " +inventario_id));
@@ -94,5 +99,13 @@ public class InventarioProductoService implements IInventarioProductoService {
         } else {
             return false;
         }
+    }
+
+    public List<InventarioProducto> getProductoPorInventario(Long inventarioId) {
+        return _repository.findByInventarioId(inventarioId);
+    }
+
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

@@ -21,10 +21,6 @@ public class EntradaMaterial {
     private Date fecha;
 
     @ManyToOne
-    @JoinColumn(name = "inventario_id", nullable = false)
-    private Inventario inventario;
-
-    @ManyToOne
     @JoinColumn(name = "compra_id", nullable = false)
     private Compra compra;
 
@@ -40,10 +36,6 @@ public class EntradaMaterial {
         return id;
     }
 
-    public Inventario getInventario() {
-        return inventario;
-    }
-
     public void setCompra(Compra compra) {
         this.compra = compra;
     }
@@ -54,9 +46,5 @@ public class EntradaMaterial {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setInventario(Inventario inventario) {
-        this.inventario = inventario;
     }
 }

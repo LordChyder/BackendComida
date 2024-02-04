@@ -2,7 +2,6 @@ package com.coderdot.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,11 +15,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.CompraRequest;
 import com.coderdot.entities.Compra;
+import com.coderdot.entities.Inventario;
+import com.coderdot.entities.Proveedor;
+import com.coderdot.entities.Sucursal;
+import com.coderdot.models.OperationResult;
+import com.coderdot.models.UserSummary;
 import com.coderdot.services.Compra.CompraService;
+import com.coderdot.services.Inventario.InventarioService;
+import com.coderdot.services.Proveedor.ProveedorService;
+import com.coderdot.services.Sucursal.SucursalService;
+import com.coderdot.services.User.UserService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/compras")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
@@ -28,9 +37,17 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class CompraController {
 
     private final CompraService _service;
+    private final UserService _userService;
+    private final ProveedorService _proveedorService;
+    private final SucursalService _sucursalService;
+    private final InventarioService _iService;
 
-    public CompraController(CompraService service) {
+    public CompraController(CompraService service, UserService userService, SucursalService sucursalService, InventarioService iService, ProveedorService proveedorService) {
         this._service = service;
+        this._userService = userService;
+        this._proveedorService = proveedorService;
+        this._iService = iService;
+        this._sucursalService = sucursalService;
     }
 
     @GetMapping
@@ -47,33 +64,50 @@ public class CompraController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CompraRequest  entity ) {
-        try {
-            _service.create(entity.toCompra());
-            return ResponseEntity.ok("Compra creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el Compra: " + e.getMessage());
-        }
+        boolean result = _service.create(entity.toCompra());
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id, @RequestBody CompraRequest entity) {
         
-        Compra ent = new Compra();
-        BeanUtils.copyProperties(entity, entity.toCompra());
+        boolean result = _service.update(id, entity.toCompra());
 
-        boolean result = _service.update(id, ent);
-
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
+
+    @GetMapping("/get/usuarios")
+    public List<UserSummary> getUsuarios() {
+        return _userService.getAllUsers();
+    }
+    
+    @GetMapping("/get/proveedores")
+    public List<Proveedor> getProveedores() {
+        return _proveedorService.getAll();
+    }
+    
+    @GetMapping("/get/sucursales")
+    public List<Sucursal> getSucursales() {
+        return _sucursalService.getAll();
+    }
+    @GetMapping("/get/inventarios/{sucursalId}")
+    public List<Inventario> getAllInventariosBySucursal(@PathVariable Long sucursalId) {
+       
+        return _iService.getInventarioBySucursalId(sucursalId);
+    }
+
+    @PutMapping("/{compraId}/aprobar")
+    public ResponseEntity<Boolean> aprobarCompra(@PathVariable Long compraId) {
+        boolean result = _service.setClose(compraId);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    

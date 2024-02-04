@@ -8,7 +8,7 @@ public class ProductoRequest {
     private String descripcion;
     private String caracteristica;
     private String codigo;
-    private Long categoriaId;
+    private Long categoria_id;
 
     // Getters y setters
 
@@ -35,12 +35,12 @@ public class ProductoRequest {
         this.caracteristica = caracteristica;
     }
 
-    public Long getCategoriaId() {
-        return categoriaId;
+    public Long getCategoria_id() {
+        return categoria_id;
     }
 
-    public void setCategoriaId(Long categoriaId) {
-        this.categoriaId = categoriaId;
+    public void setCategoria_id(Long categoria_id) {
+        this.categoria_id = categoria_id;
     }
 
     public String getDescripcion() {
@@ -59,7 +59,7 @@ public class ProductoRequest {
         producto.setCodigo(this.codigo);
 
         Categoria categoria = new Categoria();
-        categoria.setId(this.categoriaId);
+        categoria.setId(this.categoria_id);
         producto.setCategoria(categoria);
 
         return producto;

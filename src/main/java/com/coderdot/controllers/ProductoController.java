@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.ProductoRequest;
 import com.coderdot.entities.Producto;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.Producto.ProductoService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/productos")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('ALMACEN')")
@@ -46,29 +48,22 @@ public class ProductoController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody ProductoRequest  entity ) {
-        try {
-            _service.create(entity.toProducto());
-            return ResponseEntity.ok("Producto creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el producto: " + e.getMessage());
-        }
+        boolean result = _service.create(entity.toProducto());
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id,  @RequestBody ProductoRequest entity) {
         boolean result = _service.update(id, entity.toProducto());
 
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    

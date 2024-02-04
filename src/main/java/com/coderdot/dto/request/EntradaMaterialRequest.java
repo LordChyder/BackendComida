@@ -4,34 +4,24 @@ import java.util.Date;
 
 import org.springframework.lang.NonNull;
 
-import com.coderdot.entities.Inventario;
 import com.coderdot.entities.EntradaMaterial;
 import com.coderdot.entities.Compra;
 
 public class EntradaMaterialRequest {
 
     private Date fecha;
-    private Long inventarioId;
-    private Long compraId;
+    private Long compra_id;
 
-    public Long getInventarioId() {
-        return inventarioId;
-    }
-
-    public Long getCompraId() {
-        return compraId;
+    public Long getCompra_id() {
+        return compra_id;
     }
 
     public Date getFecha() {
         return fecha;
     }
     
-    public void setInventarioId(Long inventarioId) {
-        this.inventarioId = inventarioId;
-    }
-
-    public void setCompraId(Long compraId) {
-        this.compraId = compraId;
+    public void setCompra_id(Long compra_id) {
+        this.compra_id = compra_id;
     }
 
     public void setFecha(Date fecha) {
@@ -42,13 +32,9 @@ public class EntradaMaterialRequest {
         EntradaMaterial entradaMaterial = new EntradaMaterial();
         entradaMaterial.setFecha(this.fecha);
         
-        Inventario inventario = new Inventario();
-        inventario.setId(this.inventarioId);
-        
         Compra compra = new Compra();
-        compra.setId(this.compraId);
+        compra.setId(this.compra_id);
 
-        entradaMaterial.setInventario(inventario);
         entradaMaterial.setCompra(compra);
 
         return entradaMaterial;

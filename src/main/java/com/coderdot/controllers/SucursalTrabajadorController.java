@@ -2,7 +2,6 @@ package com.coderdot.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,11 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.SucursalTrabajadorRequest;
 import com.coderdot.entities.SucursalTrabajador;
+import com.coderdot.models.OperationResult;
+import com.coderdot.models.UserSummary;
 import com.coderdot.services.SucursalTrabajador.SucursalTrabajadorService;
+import com.coderdot.services.User.UserService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/sucursal-trabajadores")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
@@ -28,9 +31,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class SucursalTrabajadorController {
 
     private final SucursalTrabajadorService _service;
+    private final UserService _userService;
 
-    public SucursalTrabajadorController(SucursalTrabajadorService service) {
+    public SucursalTrabajadorController(SucursalTrabajadorService service, UserService userService) {
         this._service = service;
+        this._userService = userService;
     }
 
     @GetMapping
@@ -47,33 +52,32 @@ public class SucursalTrabajadorController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody SucursalTrabajadorRequest  entity ) {
-        try {
-            _service.create(entity.toSucursalTrabajador());
-            return ResponseEntity.ok("SucursalTrabajador creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el SucursalTrabajador: " + e.getMessage());
-        }
+        boolean result = _service.create(entity.toSucursalTrabajador());
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id, @RequestBody SucursalTrabajadorRequest entity) {
-        
-        SucursalTrabajador ent = new SucursalTrabajador();
-        BeanUtils.copyProperties(entity, entity.toSucursalTrabajador());
+        boolean result = _service.update(id, entity.toSucursalTrabajador());
 
-        boolean result = _service.update(id, ent);
-
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
+
+    @GetMapping("/sucursal/{sucursalId}")
+    public List<SucursalTrabajador> getSucursalTrabajadorPorSucursal(@PathVariable Long sucursalId) {
+        return _service.getSucursalTrabajadorPorSucursal(sucursalId);
+    }
+
+    @GetMapping("/get/usuarios")
+    public List<UserSummary> getUsuarios() {
+        return _userService.getAllUsers();
     }
 }    

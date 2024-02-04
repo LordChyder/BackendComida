@@ -9,31 +9,31 @@ import com.coderdot.entities.User;
 public class SucursalTrabajadorRequest {
 
     private String tipo;
-    private Long sucursalId;
-    private Long userId;
+    private Long sucursal_id;
+    private Long user_id;
 
-    public Long getSucursalId() {
-        return sucursalId;
+    public Long getSucursal_id() {
+        return sucursal_id;
     }
 
     public String getTipo() {
         return tipo;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getUser_id() {
+        return user_id;
     }
 
-    public void setSucursalId(Long sucursalId) {
-        this.sucursalId = sucursalId;
+    public void setSucursal_id(Long sucursal_id) {
+        this.sucursal_id = sucursal_id;
     }
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
     }
 
     public @NonNull SucursalTrabajador toSucursalTrabajador() {
@@ -41,10 +41,10 @@ public class SucursalTrabajadorRequest {
         sucursalTrabajador.setTipo(this.tipo);
         
         User user = new User();
-        user.setId(this.userId);
+        user.setId(this.user_id);
         
         Sucursal sucursal = new Sucursal();
-        sucursal.setId(this.sucursalId);
+        sucursal.setId(this.sucursal_id);
 
         sucursalTrabajador.setUser(user);
         sucursalTrabajador.setSucursal(sucursal);

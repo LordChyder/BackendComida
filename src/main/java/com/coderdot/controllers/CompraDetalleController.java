@@ -2,7 +2,6 @@ package com.coderdot.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,11 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.CompraDetalleRequest;
 import com.coderdot.entities.CompraDetalle;
+import com.coderdot.entities.Inventario;
+import com.coderdot.entities.InventarioProducto;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.CompraDetalle.CompraDetalleService;
+import com.coderdot.services.Inventario.InventarioService;
+import com.coderdot.services.InventarioProducto.InventarioProductoService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/compras-detalles")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
@@ -28,14 +33,39 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class CompraDetalleController {
 
     private final CompraDetalleService _service;
+    private final InventarioProductoService _ipService;
+    private final InventarioService _iService;
 
-    public CompraDetalleController(CompraDetalleService service) {
+    public CompraDetalleController(CompraDetalleService service, InventarioProductoService ipService, InventarioService iService) {
         this._service = service;
+        this._iService = iService;
+        this._ipService = ipService;
     }
 
     @GetMapping
     public List<CompraDetalle> getAll() {
         return _service.getAll();
+    }
+
+    @GetMapping("/get/inventarios")
+    public List<Inventario> getAllInventarios() {
+        return _iService.getAll();
+    }
+
+    @GetMapping("/get/inventarios/{sucursalId}")
+    public List<Inventario> getAllInventariosBySucursal(@PathVariable Long sucursalId) {
+       
+        return _iService.getInventarioBySucursalId(sucursalId);
+    }
+
+    @GetMapping("/get/productos/{inventarioId}")
+    public List<InventarioProducto> getProductoPorInventario(@PathVariable Long inventarioId) {
+        return _ipService.getProductoPorInventario(inventarioId);
+    }
+
+    @GetMapping("/get/compra/{compraId}")
+    public List<CompraDetalle> getDetallePorCompra(@PathVariable Long compraId) {
+        return _service.getDetallePorCompra(compraId);
     }
 
     @GetMapping("/{id}")
@@ -47,34 +77,23 @@ public class CompraDetalleController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CompraDetalleRequest  entity ) {
-        try {
-            _service.create(entity.toCompraDetalle());
-            return ResponseEntity.ok("CompraDetalle creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el CompraDetalle: " + e.getMessage());
-        }
+        boolean result = _service.create(entity.toCompraDetalle());
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id, @RequestBody CompraDetalleRequest entity) {
         
-        CompraDetalle ent = new CompraDetalle();
+        boolean result = _service.update(id, entity.toCompraDetalle());
 
-        BeanUtils.copyProperties(entity, entity.toCompraDetalle());
-
-        boolean result = _service.update(id, ent);
-
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    

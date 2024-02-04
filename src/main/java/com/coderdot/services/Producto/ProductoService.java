@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Categoria;
 import com.coderdot.entities.Producto;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.CategoriaRepository;
 import com.coderdot.repository.ProductoRepository;
 
@@ -18,10 +19,13 @@ public class ProductoService implements IProductoService {
 
     private final ProductoRepository _repository;
     private final CategoriaRepository _categoriaRepository;
+    private final MessageResult _messageResult;
 
-    public ProductoService(ProductoRepository repository, CategoriaRepository categoriaRepository) {
+    public ProductoService(ProductoRepository repository, CategoriaRepository categoriaRepository, 
+    MessageResult messageResult) {
         this._repository = repository;
         this._categoriaRepository = categoriaRepository;
+        this._messageResult = messageResult;
     }
 
     public List<Producto> getAll() {
@@ -79,5 +83,9 @@ public class ProductoService implements IProductoService {
         } else {
             return false;
         }
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

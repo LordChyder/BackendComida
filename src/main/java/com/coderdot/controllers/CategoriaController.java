@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.CategoriaSavedRequest;
 import com.coderdot.entities.Categoria;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.Categoria.CategoriaService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/categorias")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('ALMACEN')")
@@ -30,7 +32,7 @@ public class CategoriaController {
     private final CategoriaService _service;
 
     public CategoriaController(CategoriaService service) {
-        this._service = service;
+        this._service = service;;
     }
 
     @GetMapping
@@ -47,16 +49,12 @@ public class CategoriaController {
 
     @PostMapping
     public ResponseEntity<?> create(@NonNull @RequestBody CategoriaSavedRequest  entity ) {
-        try {
-            
-            Categoria ent = new Categoria();
-            BeanUtils.copyProperties(entity, ent);
+        Categoria ent = new Categoria();
+        BeanUtils.copyProperties(entity, ent);
 
-            _service.create(ent);
-            return ResponseEntity.ok("Categoria creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el Categoria: " + e.getMessage());
-        }
+        boolean result = _service.create(ent);
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
@@ -67,17 +65,13 @@ public class CategoriaController {
 
         boolean result = _service.update(id, ent);
 
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    
