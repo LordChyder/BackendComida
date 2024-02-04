@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.PedidoDetalleRequest;
+import com.coderdot.dto.response.PedidoDetalleDTO;
 import com.coderdot.entities.PedidoDetalle;
 import com.coderdot.entities.SucursalComida;
 import com.coderdot.models.OperationResult;
@@ -78,7 +79,7 @@ public class PedidoDetalleController {
     }
 
     @GetMapping("/get/pedido/{pedidoId}")
-    public List<PedidoDetalle> getDetallePorPedido(@PathVariable Long pedidoId) {
-        return _service.getDetallePorPedido(pedidoId);
+    public List<PedidoDetalleDTO> getDetallePorPedido(@PathVariable Long pedidoId) {
+        return _service.findPedidoDetalleWithPrecioByPedidoId(pedidoId);
     }
 }    

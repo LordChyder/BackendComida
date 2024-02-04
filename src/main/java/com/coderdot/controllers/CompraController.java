@@ -18,13 +18,13 @@ import com.coderdot.entities.Compra;
 import com.coderdot.entities.Inventario;
 import com.coderdot.entities.Proveedor;
 import com.coderdot.entities.Sucursal;
+import com.coderdot.entities.SucursalTrabajador;
 import com.coderdot.models.OperationResult;
-import com.coderdot.models.UserSummary;
 import com.coderdot.services.Compra.CompraService;
 import com.coderdot.services.Inventario.InventarioService;
 import com.coderdot.services.Proveedor.ProveedorService;
 import com.coderdot.services.Sucursal.SucursalService;
-import com.coderdot.services.User.UserService;
+import com.coderdot.services.SucursalTrabajador.SucursalTrabajadorService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -37,17 +37,17 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class CompraController {
 
     private final CompraService _service;
-    private final UserService _userService;
+    private final SucursalTrabajadorService _ctService;
     private final ProveedorService _proveedorService;
     private final SucursalService _sucursalService;
     private final InventarioService _iService;
 
-    public CompraController(CompraService service, UserService userService, SucursalService sucursalService, InventarioService iService, ProveedorService proveedorService) {
+    public CompraController(CompraService service, SucursalTrabajadorService ctService, SucursalService sucursalService, InventarioService iService, ProveedorService proveedorService) {
         this._service = service;
-        this._userService = userService;
         this._proveedorService = proveedorService;
         this._iService = iService;
         this._sucursalService = sucursalService;
+        this._ctService = ctService;
     }
 
     @GetMapping
@@ -84,9 +84,10 @@ public class CompraController {
         return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
-    @GetMapping("/get/usuarios")
-    public List<UserSummary> getUsuarios() {
-        return _userService.getAllUsers();
+    
+    @GetMapping("/get/usuarios/{sucursalId}")
+    public List<SucursalTrabajador> getUsuarios(@PathVariable Long sucursalId) {
+        return _ctService.getSucursalTrabajadorPorSucursal(sucursalId);
     }
     
     @GetMapping("/get/proveedores")

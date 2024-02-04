@@ -5,7 +5,6 @@ import java.util.Date;
 import org.springframework.lang.NonNull;
 
 import com.coderdot.entities.CajaApertura;
-import com.coderdot.entities.User;
 import com.coderdot.entities.Venta;
 
 public class VentaRequest {
@@ -15,11 +14,19 @@ public class VentaRequest {
     private Date fecha;
     private Number total;
     private Boolean estado;
-    private Long userId;
-    private Long cajaAperturaId;
+    private Long caja_apertura_id;
+    private Long pedido_id;
 
-    public Long getCajaAperturaId() {
-        return cajaAperturaId;
+    public Long getCaja_apertura_id() {
+        return caja_apertura_id;
+    }
+
+    public Long getPedido_id() {
+        return pedido_id;
+    }
+
+    public void setPedido_id(Long pedido_id) {
+        this.pedido_id = pedido_id;
     }
 
     public String getCliente() {
@@ -42,12 +49,8 @@ public class VentaRequest {
         return total;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setCajaAperturaId(Long cajaAperturaId) {
-        this.cajaAperturaId = cajaAperturaId;
+    public void setCaja_apertura_id(Long caja_apertura_id) {
+        this.caja_apertura_id = caja_apertura_id;
     }
 
     public void setCliente(String cliente) {
@@ -70,10 +73,6 @@ public class VentaRequest {
         this.total = total;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     public @NonNull Venta toVenta() {
         Venta venta = new Venta();
         venta.setCliente(this.cliente);
@@ -81,14 +80,9 @@ public class VentaRequest {
         venta.setFecha(this.fecha);
         venta.setTotal(this.total);
         venta.setEstado(this.estado);
-        
-        User user = new User();
-        user.setId(this.userId);
 
-        venta.setUser(user);
-        
         CajaApertura cajaApertura = new CajaApertura();
-        cajaApertura.setId(this.cajaAperturaId);
+        cajaApertura.setId(this.caja_apertura_id);
 
         venta.setCajaApertura(cajaApertura);
 

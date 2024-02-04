@@ -7,15 +7,19 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.TipoDocumento;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.TipoDocumentoRepository;
 
 @Service
 public class TipoDocumentoService implements ITipoDocumentoService {
 
     private final TipoDocumentoRepository _repository;
+    private final MessageResult _messageResult;
 
-    public TipoDocumentoService(TipoDocumentoRepository repository) {
+    public TipoDocumentoService(TipoDocumentoRepository repository, 
+    MessageResult messageResult) {
         this._repository = repository;
+        this._messageResult = messageResult;
     }
 
     public List<TipoDocumento> getAll() {
@@ -40,6 +44,7 @@ public class TipoDocumentoService implements ITipoDocumentoService {
         try {
             _repository.findById(id).map(existingEntity -> {
                 existingEntity.setNombre(entity.getNombre());
+                existingEntity.setEstado(entity.getEstado());
                 return _repository.save(existingEntity);
             });
 
@@ -56,5 +61,9 @@ public class TipoDocumentoService implements ITipoDocumentoService {
         } else {
             return false;
         }
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

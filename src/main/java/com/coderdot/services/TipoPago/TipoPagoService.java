@@ -7,15 +7,19 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.TipoPago;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.TipoPagoRepository;
 
 @Service
 public class TipoPagoService implements ITipoPagoService {
 
     private final TipoPagoRepository _repository;
+    private final MessageResult _messageResult;
 
-    public TipoPagoService(TipoPagoRepository repository) {
+    public TipoPagoService(TipoPagoRepository repository, 
+    MessageResult messageResult) {
         this._repository = repository;
+        this._messageResult = messageResult;
     }
 
     public List<TipoPago> getAll() {
@@ -40,6 +44,7 @@ public class TipoPagoService implements ITipoPagoService {
         try {
             _repository.findById(id).map(existingEntity -> {
                 existingEntity.setNombre(entity.getNombre());
+                existingEntity.setEstado(entity.getEstado());
                 return _repository.save(existingEntity);
             });
 
@@ -56,5 +61,9 @@ public class TipoPagoService implements ITipoPagoService {
         } else {
             return false;
         }
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

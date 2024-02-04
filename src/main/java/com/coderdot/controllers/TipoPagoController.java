@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.TipoPagoRequest;
 import com.coderdot.entities.TipoPago;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.TipoPago.TipoPagoService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/tipos-pagos")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('VENTA')")
@@ -47,16 +49,12 @@ public class TipoPagoController {
 
     @PostMapping
     public ResponseEntity<?> create(@NonNull @RequestBody TipoPagoRequest  entity ) {
-        try {
-            
-            TipoPago ent = new TipoPago();
-            BeanUtils.copyProperties(entity, ent);
+        TipoPago ent = new TipoPago();
+        BeanUtils.copyProperties(entity, ent);
 
-            _service.create(ent);
-            return ResponseEntity.ok("TipoPago creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el TipoPago: " + e.getMessage());
-        }
+        boolean result = _service.create(ent);
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
@@ -67,17 +65,12 @@ public class TipoPagoController {
 
         boolean result = _service.update(id, ent);
 
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    

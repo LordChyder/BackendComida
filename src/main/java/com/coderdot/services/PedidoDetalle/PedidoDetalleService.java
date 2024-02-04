@@ -1,11 +1,13 @@
 package com.coderdot.services.PedidoDetalle;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import com.coderdot.dto.response.PedidoDetalleDTO;
 import com.coderdot.entities.Comida;
 import com.coderdot.entities.Pedido;
 import com.coderdot.entities.PedidoDetalle;
@@ -110,6 +112,21 @@ public class PedidoDetalleService implements IPedidoDetalleService {
     public List<PedidoDetalle> getDetallePorPedido(Long compraId) {
         return _repository.findByPedidoId(compraId);
     }
+
+    public List<PedidoDetalleDTO> findPedidoDetalleWithPrecioByPedidoId(Long pedidoId) {
+    List<Object[]> results = _repository.findPedidoDetalleWithPrecioByPedidoId(pedidoId);
+    List<PedidoDetalleDTO> dtos = new ArrayList<>();
+
+    for (Object[] result : results) {
+        PedidoDetalle pedidoDetalle = (PedidoDetalle) result[0];
+        Float precio = (Float) result[1];
+        
+        PedidoDetalleDTO dto = new PedidoDetalleDTO(pedidoDetalle, precio);
+        dtos.add(dto);
+    }
+
+    return dtos;
+}
     
     public MessageResult getResult() {
         return this._messageResult;

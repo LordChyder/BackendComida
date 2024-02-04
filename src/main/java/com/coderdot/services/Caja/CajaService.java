@@ -83,6 +83,10 @@ public class CajaService implements ICajaService {
             return false;
         }
     }
+
+    public List<Caja> getCajasPorSucursal(Long sucursalId) {
+        return _repository.findBySucursalId(sucursalId);
+    }
     
     public MessageResult getResult() {
         return this._messageResult;

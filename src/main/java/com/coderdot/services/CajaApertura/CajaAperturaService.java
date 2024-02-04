@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.User;
+import com.coderdot.models.MessageResult;
 import com.coderdot.entities.Caja;
 import com.coderdot.entities.CajaApertura;
 import com.coderdot.repository.CajaAperturaRepository;
@@ -21,11 +22,14 @@ public class CajaAperturaService implements ICajaAperturaService {
     private final CajaAperturaRepository _repository;
     private final CajaRepository _cajaRepository;
     private final UserRepository _userRepository;
+    private final MessageResult _messageResult;
 
-    public CajaAperturaService(CajaAperturaRepository repository, CajaRepository cajaRepository, UserRepository userRepository) {
+    public CajaAperturaService(CajaAperturaRepository repository, CajaRepository cajaRepository, UserRepository userRepository, 
+    MessageResult messageResult) {
         this._repository = repository;
         this._cajaRepository = cajaRepository;
         this._userRepository = userRepository;
+        this._messageResult = messageResult;
     }
 
     public List<CajaApertura> getAll() {
@@ -97,5 +101,14 @@ public class CajaAperturaService implements ICajaAperturaService {
         } else {
             return false;
         }
+    }
+    
+
+    public List<CajaApertura> getCajasAperturadasNoCerradas(Long sucursalId) {
+        return _repository.findByCerradoFalseAndCajaSucursalId(sucursalId);
+    }
+
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

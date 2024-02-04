@@ -114,6 +114,10 @@ public class PedidoService implements IPedidoService {
         return true;
     }
     
+    public List<Pedido> getPedidosActivos(Long sucursalId) {
+        return _repository.findBySucursalIdAndEstadoTrueAndAnuladoFalseAndVentaIsNull(sucursalId);
+    }
+    
     public MessageResult getResult() {
         return this._messageResult;
     }

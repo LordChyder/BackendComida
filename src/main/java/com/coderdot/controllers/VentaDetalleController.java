@@ -2,7 +2,6 @@ package com.coderdot.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,12 +14,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.VentaDetalleRequest;
+import com.coderdot.entities.SucursalComida;
 import com.coderdot.entities.VentaDetalle;
+import com.coderdot.models.OperationResult;
+import com.coderdot.services.SucursalComida.SucursalComidaService;
 import com.coderdot.services.VentaDetalle.VentaDetalleService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/ventas-detalles")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
@@ -28,9 +31,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class VentaDetalleController {
 
     private final VentaDetalleService _service;
+    private final SucursalComidaService _sucursalComidaService;
 
-    public VentaDetalleController(VentaDetalleService service) {
+    public VentaDetalleController(VentaDetalleService service, SucursalComidaService sucursalComidaService) {
         this._service = service;
+        this._sucursalComidaService = sucursalComidaService;
     }
 
     @GetMapping
@@ -45,35 +50,35 @@ public class VentaDetalleController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/get/venta/{ventaId}")
+    public List<VentaDetalle> getDetallePorVenta(@PathVariable Long ventaId) {
+        return _service.getDetallePorVenta(ventaId);
+    }
+
+    @GetMapping("/get/comidas/{sucursalId}")
+    public List<SucursalComida> getComidaPorSucursal(@PathVariable Long sucursalId) {
+        return _sucursalComidaService.getComidaPorSucursal(sucursalId);
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@RequestBody VentaDetalleRequest  entity ) {
-        try {
-            _service.create(entity.toVentaDetalle());
-            return ResponseEntity.ok("VentaDetalle creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el VentaDetalle: " + e.getMessage());
-        }
+        boolean result = _service.create(entity.toVentaDetalle());
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id, @RequestBody VentaDetalleRequest entity) {
         
-        VentaDetalle ent = new VentaDetalle();
-        BeanUtils.copyProperties(entity, entity.toVentaDetalle());
+        boolean result = _service.update(id, entity.toVentaDetalle());
 
-        boolean result = _service.update(id, ent);
-
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    

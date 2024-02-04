@@ -2,7 +2,6 @@ package com.coderdot.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,12 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.CajaAperturaRequest;
+import com.coderdot.entities.Caja;
 import com.coderdot.entities.CajaApertura;
+import com.coderdot.entities.Sucursal;
+import com.coderdot.entities.SucursalTrabajador;
+import com.coderdot.models.OperationResult;
+import com.coderdot.services.Caja.CajaService;
 import com.coderdot.services.CajaApertura.CajaAperturaService;
+import com.coderdot.services.Sucursal.SucursalService;
+import com.coderdot.services.SucursalTrabajador.SucursalTrabajadorService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/cajas-aperturas")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
@@ -28,9 +35,16 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class CajaAperturaController {
 
     private final CajaAperturaService _service;
+    private final SucursalTrabajadorService _ctService;
+    private final SucursalService _sucursalService;
+    private final CajaService _cajaService;
 
-    public CajaAperturaController(CajaAperturaService service) {
+    public CajaAperturaController(SucursalTrabajadorService ctService, CajaAperturaService service, 
+    SucursalService sucursalService, CajaService cajaService) {
         this._service = service;
+        this._cajaService = cajaService;
+        this._sucursalService = sucursalService;
+        this._ctService = ctService;
     }
 
     @GetMapping
@@ -47,33 +61,37 @@ public class CajaAperturaController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CajaAperturaRequest  entity ) {
-        try {
-            _service.create(entity.toCajaApertura());
-            return ResponseEntity.ok("CajaApertura creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el CajaApertura: " + e.getMessage());
-        }
+        boolean result = _service.create(entity.toCajaApertura());
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id, @RequestBody CajaAperturaRequest entity) {
-        
-        CajaApertura ent = new CajaApertura();
-        BeanUtils.copyProperties(entity, entity.toCajaApertura());
+        boolean result = _service.update(id, entity.toCajaApertura());
 
-        boolean result = _service.update(id, ent);
-
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
+    
+    @GetMapping("/get/sucursales")
+    public List<Sucursal> getSucursales() {
+        return _sucursalService.getAll();
+    }
+
+    @GetMapping("/get/usuarios/{sucursalId}")
+    public List<SucursalTrabajador> getUsuarios(@PathVariable Long sucursalId) {
+        return _ctService.getSucursalTrabajadorPorSucursal(sucursalId);
+    }
+
+    @GetMapping("/get/cajas/{sucursalId}")
+    public List<Caja> getCajas(@PathVariable Long sucursalId) {
+        return _cajaService.getCajasPorSucursal(sucursalId);
     }
 }    

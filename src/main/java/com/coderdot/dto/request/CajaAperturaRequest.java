@@ -15,11 +15,11 @@ public class CajaAperturaRequest {
     private Date fecha;
     private Number total;
     private Boolean cerrado;
-    private Long userId;
-    private Long cajaId;
+    private Long user_id;
+    private Long caja_id;
 
-    public Long getCajaId() {
-        return cajaId;
+    public Long getCaja_id() {
+        return caja_id;
     }
 
     public Boolean getCerrado() {
@@ -34,12 +34,12 @@ public class CajaAperturaRequest {
         return total;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getUser_id() {
+        return user_id;
     }
 
-    public void setCajaId(Long cajaId) {
-        this.cajaId = cajaId;
+    public void setCaja_id(Long caja_id) {
+        this.caja_id = caja_id;
     }
 
     public void setCerrado(Boolean cerrado) {
@@ -54,8 +54,8 @@ public class CajaAperturaRequest {
         this.total = total;
     }
     
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
     }
 
     public @NonNull CajaApertura toCajaApertura() {
@@ -65,10 +65,10 @@ public class CajaAperturaRequest {
         cajaApertura.setTotal(this.total);
         
         Caja caja = new Caja();
-        caja.setId(this.cajaId);
+        caja.setId(this.caja_id);
         
         User user = new User();
-        user.setId(this.userId);
+        user.setId(this.user_id);
 
         cajaApertura.setUser(user);
         cajaApertura.setCaja(caja);

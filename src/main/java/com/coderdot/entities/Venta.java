@@ -25,10 +25,6 @@ public class Venta {
     private Boolean estado;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne
     @JoinColumn(name = "caja_apertura_id", nullable = false)
     private CajaApertura cajaApertura;
 
@@ -60,10 +56,6 @@ public class Venta {
         return total;
     }
 
-    public User getUser() {
-        return user;
-    }
-    
     public void setCajaApertura(CajaApertura cajaApertura) {
         this.cajaApertura = cajaApertura;
     }
@@ -82,10 +74,6 @@ public class Venta {
 
     public void setTotal(Number total) {
         this.total = total;
-    }
-    
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public void setCliente(String cliente) {

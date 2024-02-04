@@ -2,7 +2,6 @@ package com.coderdot.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,12 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.VentaRequest;
+import com.coderdot.entities.CajaApertura;
+import com.coderdot.entities.Pedido;
+import com.coderdot.entities.Sucursal;
 import com.coderdot.entities.Venta;
+import com.coderdot.models.OperationResult;
+import com.coderdot.services.CajaApertura.CajaAperturaService;
+import com.coderdot.services.Pedido.PedidoService;
+import com.coderdot.services.Sucursal.SucursalService;
 import com.coderdot.services.Venta.VentaService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/ventas")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
@@ -28,9 +35,16 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class VentaController {
 
     private final VentaService _service;
+    private final SucursalService _sucursalService;
+    private final CajaAperturaService _cajaService;
+    private final PedidoService _pedidoService;
 
-    public VentaController(VentaService service) {
+    public VentaController(VentaService service, SucursalService sucursalService, CajaAperturaService cajaService,
+    PedidoService pedidoService) {
         this._service = service;
+        this._sucursalService = sucursalService;
+        this._cajaService = cajaService;
+        this._pedidoService = pedidoService;
     }
 
     @GetMapping
@@ -47,33 +61,50 @@ public class VentaController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody VentaRequest  entity ) {
-        try {
-            _service.create(entity.toVenta());
-            return ResponseEntity.ok("Venta creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el Venta: " + e.getMessage());
+
+        
+        if (entity.getPedido_id() == null) {
+            boolean result = _service.create(entity.toVenta());
+            return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+        } else {
+            boolean result = _service.createWithPedido(entity.toVenta(), entity.getPedido_id());
+            return OperationResult.getOperationResult(result, _service.getResult().getMessages());
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id, @RequestBody VentaRequest entity) {
-        
-        Venta ent = new Venta();
-        BeanUtils.copyProperties(entity, entity.toVenta());
+        boolean result = _service.update(id, entity.toVenta());
 
-        boolean result = _service.update(id, ent);
-
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean result = _service.delete(id);
+
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
+
+    @GetMapping("/get/sucursales")
+    public List<Sucursal> getSucursales() {
+        return _sucursalService.getAll();
+    }
+
+    @GetMapping("/get/cajas/{sucursalId}")
+    public List<CajaApertura> getCajasAperturadasNoCerradas(@PathVariable Long sucursalId) {
+        return _cajaService.getCajasAperturadasNoCerradas(sucursalId);
+    }
+
+    @GetMapping("/get/pedidos/{sucursalId}")
+    public List<Pedido> getPedidosPorSucursal(@PathVariable Long sucursalId) {
+        return _pedidoService.getPedidosActivos(sucursalId);
+    }
+
+    @PutMapping("/{ventaId}/aprobar")
+    public ResponseEntity<Boolean> aprobarVenta(@PathVariable Long ventaId) {
+        boolean result = _service.setClose(ventaId);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    
