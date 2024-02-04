@@ -17,7 +17,6 @@ public class PedidoDetalle {
     private Long id;
 
     private Integer cantidad;
-    private Float precio_unitario;
 
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
@@ -34,20 +33,12 @@ public class PedidoDetalle {
         return id;
     }
 
-    public Float getPrecio_unitario() {
-        return precio_unitario;
-    }
-
     public Pedido getPedido() {
         return pedido;
     }
 
     public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
-    }
-
-    public void setPrecio_unitario(Float precio_unitario) {
-        this.precio_unitario = precio_unitario;
     }
 
     public void setId(Long id) {

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Sucursal;
 import com.coderdot.entities.SucursalComida;
+import com.coderdot.models.MessageResult;
 import com.coderdot.entities.Comida;
 import com.coderdot.repository.SucursalComidaRepository;
 import com.coderdot.repository.SucursalRepository;
@@ -21,11 +22,14 @@ public class SucursalComidaService implements ISucursalComidaService {
     private final SucursalComidaRepository _repository;
     private final ComidaRepository _comidaRepository;
     private final SucursalRepository _sucursalRepository;
+    private final MessageResult _messageResult;
     
-    public SucursalComidaService(SucursalComidaRepository repository, ComidaRepository comidaRepository, SucursalRepository sucursalRepository) {
+    public SucursalComidaService(SucursalComidaRepository repository, MessageResult messageResult, 
+    ComidaRepository comidaRepository, SucursalRepository sucursalRepository) {
         this._repository = repository;
         this._comidaRepository = comidaRepository;
         this._sucursalRepository = sucursalRepository;
+        this._messageResult = messageResult;
     }
 
     public List<SucursalComida> getAll() {
@@ -77,6 +81,7 @@ public class SucursalComidaService implements ISucursalComidaService {
             _repository.findById(id).map(existingEntity -> {
                 existingEntity.setComida(entity.getComida());
                 existingEntity.setSucursal(entity.getSucursal());
+                existingEntity.setPrecio(entity.getPrecio());
                 return _repository.save(existingEntity);
             });
 
@@ -93,5 +98,13 @@ public class SucursalComidaService implements ISucursalComidaService {
         } else {
             return false;
         }
+    }
+
+    public List<SucursalComida> getComidaPorSucursal(Long sucursalId) {
+        return _repository.findBySucursalId(sucursalId);
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

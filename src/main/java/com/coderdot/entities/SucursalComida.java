@@ -15,6 +15,8 @@ public class SucursalComida {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Float precio;
+
     @ManyToOne
     @JoinColumn(name = "sucursal_id", nullable = false)
     private Sucursal sucursal;
@@ -25,6 +27,10 @@ public class SucursalComida {
 
     public Long getId() {
         return id;
+    }
+
+    public Float getPrecio() {
+        return precio;
     }
 
     public Sucursal getSucursal() {
@@ -45,5 +51,9 @@ public class SucursalComida {
 
     public void setComida(Comida comida) {
         this.comida = comida;
+    }
+
+    public void setPrecio(Float precio) {
+        this.precio = precio;
     }
 }

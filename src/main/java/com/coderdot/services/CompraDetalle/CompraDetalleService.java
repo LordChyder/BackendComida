@@ -53,7 +53,7 @@ public class CompraDetalleService implements ICompraDetalleService {
             Compra compra = _compraRepository.findById(compra_id)
                 .orElseThrow(() -> new EntityNotFoundException("Compra no encontrada con id: " +compra_id));
     
-            Long producto_id = entity.getCompra().getId() != null ? entity.getCompra().getId() : 0;
+            Long producto_id = entity.getProducto().getId() != null ? entity.getProducto().getId() : 0;
     
             Producto producto = _productoRepository.findById(producto_id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrada con id: " +producto_id));
@@ -78,6 +78,7 @@ public class CompraDetalleService implements ICompraDetalleService {
 
             return true;
         } catch (Exception e) {
+            System.err.println(e.getMessage());
             return false;
         }
     }

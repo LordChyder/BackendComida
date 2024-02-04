@@ -9,54 +9,44 @@ import com.coderdot.entities.PedidoDetalle;
 public class PedidoDetalleRequest {
 
     private Integer cantidad;
-    private Float precio_unitario;
-    private Long pedidoId;
-    private Long comidaId;
+    private Long pedido_id;
+    private Long comida_id;
 
     public Integer getCantidad() {
         return cantidad;
     }
 
-    public Long getComidaId() {
-        return comidaId;
+    public Long getComida_id() {
+        return comida_id;
     }
 
-    public Long getPedidoId() {
-        return pedidoId;
-    }
-
-    public Float getPrecio_unitario() {
-        return precio_unitario;
+    public Long getPedido_id() {
+        return pedido_id;
     }
 
     public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
     }
 
-    public void setComidaId(Long comidaId) {
-        this.comidaId = comidaId;
+    public void setComida_id(Long comida_id) {
+        this.comida_id = comida_id;
     }
 
-    public void setPedidoId(Long pedidoId) {
-        this.pedidoId = pedidoId;
-    }
-
-    public void setPrecio_unitario(Float precio_unitario) {
-        this.precio_unitario = precio_unitario;
+    public void setPedido_id(Long pedido_id) {
+        this.pedido_id = pedido_id;
     }
 
     public @NonNull PedidoDetalle toPedidoDetalle() {
         PedidoDetalle pedidoDetalle = new PedidoDetalle();
         pedidoDetalle.setCantidad(this.cantidad);
-        pedidoDetalle.setPrecio_unitario(this.precio_unitario);
         
         Pedido pedido = new Pedido();
-        pedido.setId(this.pedidoId);
+        pedido.setId(this.pedido_id);
 
         pedidoDetalle.setPedido(pedido);
         
         Comida comida = new Comida();
-        comida.setId(this.comidaId);
+        comida.setId(this.comida_id);
 
         pedidoDetalle.setComida(comida);
 

@@ -2,7 +2,6 @@ package com.coderdot.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,11 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.PedidoDetalleRequest;
 import com.coderdot.entities.PedidoDetalle;
+import com.coderdot.entities.SucursalComida;
+import com.coderdot.models.OperationResult;
 import com.coderdot.services.PedidoDetalle.PedidoDetalleService;
+import com.coderdot.services.SucursalComida.SucursalComidaService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/pedidos-detalles")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
@@ -28,9 +31,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class PedidoDetalleController {
 
     private final PedidoDetalleService _service;
+    private final SucursalComidaService _scService;
 
-    public PedidoDetalleController(PedidoDetalleService service) {
+    public PedidoDetalleController(PedidoDetalleService service, SucursalComidaService scService) {
         this._service = service;
+        this._scService = scService;
     }
 
     @GetMapping
@@ -47,33 +52,33 @@ public class PedidoDetalleController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody PedidoDetalleRequest  entity ) {
-        try {
-            _service.create(entity.toPedidoDetalle());
-            return ResponseEntity.ok("PedidoDetalle creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el PedidoDetalle: " + e.getMessage());
-        }
+        boolean result = _service.create(entity.toPedidoDetalle());
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id, @RequestBody PedidoDetalleRequest entity) {
-        
-        PedidoDetalle ent = new PedidoDetalle();
-        BeanUtils.copyProperties(entity, entity.toPedidoDetalle());
+        boolean result = _service.update(id, entity.toPedidoDetalle());
 
-        boolean result = _service.update(id, ent);
-
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
+
+    @GetMapping("/get/comida/{sucursalId}")
+    public List<SucursalComida> getComidaPorSucursal(@PathVariable Long sucursalId) {
+        return _scService.getComidaPorSucursal(sucursalId);
+    }
+
+    @GetMapping("/get/pedido/{pedidoId}")
+    public List<PedidoDetalle> getDetallePorPedido(@PathVariable Long pedidoId) {
+        return _service.getDetallePorPedido(pedidoId);
     }
 }    

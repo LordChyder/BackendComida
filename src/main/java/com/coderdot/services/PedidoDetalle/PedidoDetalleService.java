@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.coderdot.entities.Comida;
 import com.coderdot.entities.Pedido;
 import com.coderdot.entities.PedidoDetalle;
+import com.coderdot.models.MessageResult;
 import com.coderdot.repository.PedidoDetalleRepository;
 import com.coderdot.repository.ComidaRepository;
 import com.coderdot.repository.PedidoRepository;
@@ -20,13 +21,15 @@ public class PedidoDetalleService implements IPedidoDetalleService {
 
     private final PedidoDetalleRepository _repository;
     private final ComidaRepository _comidaRepository;
+    private final MessageResult _messageResult;
     private final PedidoRepository _pedidoRepository;
     
     public PedidoDetalleService(PedidoDetalleRepository repository, PedidoRepository pedidoRepository
-    , ComidaRepository comidaRepository) {
+    , ComidaRepository comidaRepository, MessageResult messageResult) {
         this._repository = repository;
         this._pedidoRepository = pedidoRepository;
         this._comidaRepository = comidaRepository;
+        this._messageResult = messageResult;
     }
 
     public List<PedidoDetalle> getAll() {
@@ -85,7 +88,6 @@ public class PedidoDetalleService implements IPedidoDetalleService {
                 existingEntity.setCantidad(entity.getCantidad());
                 existingEntity.setComida(entity.getComida());
                 existingEntity.setPedido(entity.getPedido());
-                existingEntity.setPrecio_unitario(entity.getPrecio_unitario());
                 return _repository.save(existingEntity);
             });
 
@@ -102,5 +104,14 @@ public class PedidoDetalleService implements IPedidoDetalleService {
         } else {
             return false;
         }
+    }
+    
+
+    public List<PedidoDetalle> getDetallePorPedido(Long compraId) {
+        return _repository.findByPedidoId(compraId);
+    }
+    
+    public MessageResult getResult() {
+        return this._messageResult;
     }
 }

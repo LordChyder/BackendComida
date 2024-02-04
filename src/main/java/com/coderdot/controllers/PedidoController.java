@@ -2,7 +2,6 @@ package com.coderdot.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,12 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.PedidoRequest;
+import com.coderdot.entities.Mesa;
 import com.coderdot.entities.Pedido;
+import com.coderdot.entities.Sucursal;
+import com.coderdot.models.OperationResult;
+import com.coderdot.services.Mesa.MesaService;
 import com.coderdot.services.Pedido.PedidoService;
+import com.coderdot.services.Sucursal.SucursalService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/pedidos")
 @PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
@@ -28,9 +33,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class PedidoController {
 
     private final PedidoService _service;
+    private final SucursalService _sucursalService;
+    private final MesaService _mesaService;
 
-    public PedidoController(PedidoService service) {
+    public PedidoController(PedidoService service, SucursalService sucursalService, MesaService mesaService) {
         this._service = service;
+        this._sucursalService = sucursalService;
+        this._mesaService = mesaService;
     }
 
     @GetMapping
@@ -47,33 +56,40 @@ public class PedidoController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody PedidoRequest  entity ) {
-        try {
-            _service.create(entity.toPedido());
-            return ResponseEntity.ok("Pedido creado exitosamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear el Pedido: " + e.getMessage());
-        }
+        boolean result = _service.create(entity.toPedido());
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id, @RequestBody PedidoRequest entity) {
-        
-        Pedido ent = new Pedido();
-        BeanUtils.copyProperties(entity, entity.toPedido());
+        boolean result = _service.update(id, entity.toPedido());
 
-        boolean result = _service.update(id, ent);
-
-        return result
-        ? ResponseEntity.ok(true)
-        : ResponseEntity.notFound().build();
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
-        if (_service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        
+        boolean result = _service.delete(id);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
+
+    @GetMapping("/get/sucursales")
+    public List<Sucursal> getSucursales() {
+        return _sucursalService.getAll();
+    }
+
+    @GetMapping("/get/mesas/{sucursalId}")
+    public List<Mesa> getMesasPorSucursal(@PathVariable Long sucursalId) {
+        return _mesaService.getMesasPorSucursal(sucursalId);
+    }
+
+    @PutMapping("/{pedidoId}/aprobar")
+    public ResponseEntity<Boolean> aprobarCompra(@PathVariable Long pedidoId) {
+        boolean result = _service.setClose(pedidoId);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 }    

@@ -1,6 +1,8 @@
 package com.coderdot.entities;
 
 
+import java.util.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,12 +19,33 @@ public class Pedido {
     private Long id;
 
     private Integer n_personas;
+    private Date fecha;
     private Boolean estado;
     private Boolean anulado;
 
     @ManyToOne
     @JoinColumn(name = "mesa_id", nullable = false)
     private Mesa mesa;
+
+    @ManyToOne
+    @JoinColumn(name = "sucursal_id", nullable = false)
+    private Sucursal sucursal;
+
+    @ManyToOne
+    @JoinColumn(name = "venta_id", nullable = true)
+    private Venta venta;
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public Venta getVenta() {
+        return venta;
+    }
+
+    public Sucursal getSucursal() {
+        return sucursal;
+    }
 
     public Boolean getAnulado() {
         return anulado;
@@ -40,8 +63,20 @@ public class Pedido {
         return mesa;
     }
 
+    public void setVenta(Venta venta) {
+        this.venta = venta;
+    }
+
     public Integer getN_personas() {
         return n_personas;
+    }
+
+    public void setSucursal(Sucursal sucursal) {
+        this.sucursal = sucursal;
+    }
+    
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
     }
 
     public void setAnulado(Boolean anulado) {

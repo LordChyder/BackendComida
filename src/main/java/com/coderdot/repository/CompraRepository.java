@@ -15,7 +15,6 @@ public interface CompraRepository extends JpaRepository<Compra, Long> {
     
     @Modifying
     @Query("UPDATE Compra c SET c.estado = true WHERE c.id = :compraId")
-    
     void actualizarEstado(@Param("compraId") Long compraId);
 
     List<Compra> findByEntradaFalseAndEstadoTrue();
