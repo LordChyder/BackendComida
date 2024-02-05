@@ -12,6 +12,8 @@ import com.coderdot.dto.response.PedidoDetalleDTO;
 import com.coderdot.entities.CajaApertura;
 import com.coderdot.entities.Pedido;
 import com.coderdot.entities.PedidoDetalle;
+import com.coderdot.entities.TipoDocumento;
+import com.coderdot.entities.TipoPago;
 import com.coderdot.entities.Venta;
 import com.coderdot.entities.VentaDetalle;
 import com.coderdot.models.MessageResult;
@@ -19,6 +21,8 @@ import com.coderdot.repository.VentaRepository;
 import com.coderdot.repository.CajaAperturaRepository;
 import com.coderdot.repository.PedidoDetalleRepository;
 import com.coderdot.repository.PedidoRepository;
+import com.coderdot.repository.TipoDocumentoRepository;
+import com.coderdot.repository.TipoPagoRepository;
 import com.coderdot.repository.VentaDetalleRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -31,16 +35,21 @@ public class VentaService implements IVentaService {
     private final CajaAperturaRepository _cajaAperturaRepository;
     private final PedidoRepository _pedidoRepository;
     private final PedidoDetalleRepository _pedidoDetalleRepository;
+    private final TipoPagoRepository _pagoRepository;
+    private final TipoDocumentoRepository _documentoRepository;
     private final MessageResult _messageResult;
     
     public VentaService(VentaRepository repository, PedidoRepository pedidoRepository, CajaAperturaRepository cajaAperturaRepository, 
-    MessageResult messageResult, PedidoDetalleRepository pedidoDetalleRepository, VentaDetalleRepository ventaDetalllerepository) {
+    MessageResult messageResult, PedidoDetalleRepository pedidoDetalleRepository, VentaDetalleRepository ventaDetalllerepository,
+    TipoDocumentoRepository documentoRepository, TipoPagoRepository pagoRepository) {
         this._repository = repository;
         this._cajaAperturaRepository = cajaAperturaRepository;
         this._pedidoRepository = pedidoRepository;
         this._messageResult = messageResult;
         this._pedidoDetalleRepository = pedidoDetalleRepository;
         this._ventaDetalllerepository = ventaDetalllerepository;
+        this._pagoRepository = pagoRepository;
+        this._documentoRepository = documentoRepository;
     }
 
     public List<Venta> getAll() {
@@ -53,13 +62,24 @@ public class VentaService implements IVentaService {
 
     public boolean create(@NonNull Venta entity) {
         try {
-    
             Long cajaApertura_id = entity.getCajaApertura().getId() != null ? entity.getCajaApertura().getId() : 0;
     
             CajaApertura cajaApertura = _cajaAperturaRepository.findById(cajaApertura_id)
                 .orElseThrow(() -> new EntityNotFoundException("CajaApertura no encontrada con id: " +cajaApertura_id));
+
+            Long pago_id = entity.getTipoPago().getId() != null ? entity.getTipoPago().getId() : 0;
+
+            TipoPago pago = _pagoRepository.findById(pago_id)
+                .orElseThrow(() -> new EntityNotFoundException("TipoPago no encontrada con id: " +pago_id));
+
+            Long documento_id = entity.getTipoPago().getId() != null ? entity.getTipoPago().getId() : 0;
+
+            TipoDocumento documento = _documentoRepository.findById(documento_id)
+                .orElseThrow(() -> new EntityNotFoundException("TipoDocumento no encontrada con id: " +documento_id));
     
             entity.setCajaApertura(cajaApertura);
+            entity.setTipoPago(pago);
+            entity.setTipoDocumento(documento);
 
             _repository.save(entity);
             return true;
@@ -72,16 +92,30 @@ public class VentaService implements IVentaService {
     public boolean createWithPedido(@NonNull Venta entity, Long pedido_id) {
         try {
     
+            
             Long cajaApertura_id = entity.getCajaApertura().getId() != null ? entity.getCajaApertura().getId() : 0;
     
             CajaApertura cajaApertura = _cajaAperturaRepository.findById(cajaApertura_id)
                 .orElseThrow(() -> new EntityNotFoundException("CajaApertura no encontrada con id: " +cajaApertura_id));
+
+            Long pago_id = entity.getTipoPago().getId() != null ? entity.getTipoPago().getId() : 0;
+
+            TipoPago pago = _pagoRepository.findById(pago_id)
+                .orElseThrow(() -> new EntityNotFoundException("TipoPago no encontrada con id: " +pago_id));
+
+            Long documento_id = entity.getTipoPago().getId() != null ? entity.getTipoPago().getId() : 0;
+
+            TipoDocumento documento = _documentoRepository.findById(documento_id)
+                .orElseThrow(() -> new EntityNotFoundException("TipoDocumento no encontrada con id: " +documento_id));
     
             @SuppressWarnings("null")
             Pedido pedido = _pedidoRepository.findById(pedido_id)
                 .orElseThrow(() -> new EntityNotFoundException("Pedido no encontrada con id: " +pedido_id));
     
             entity.setCajaApertura(cajaApertura);
+            entity.setTipoPago(pago);
+            entity.setTipoDocumento(documento);
+    
 
             entity.setEstado(true);
 
@@ -133,9 +167,21 @@ public class VentaService implements IVentaService {
         Long cajaApertura_id = entity.getCajaApertura().getId() != null ? entity.getCajaApertura().getId() : 0;
 
         CajaApertura cajaApertura = _cajaAperturaRepository.findById(cajaApertura_id)
-            .orElseThrow(() -> new EntityNotFoundException("User no encontrada con id: " +cajaApertura_id));
+            .orElseThrow(() -> new EntityNotFoundException("CajaApertura no encontrada con id: " +cajaApertura_id));
+
+        Long pago_id = entity.getTipoPago().getId() != null ? entity.getTipoPago().getId() : 0;
+
+        TipoPago pago = _pagoRepository.findById(pago_id)
+            .orElseThrow(() -> new EntityNotFoundException("TipoPago no encontrada con id: " +pago_id));
+
+        Long documento_id = entity.getTipoPago().getId() != null ? entity.getTipoPago().getId() : 0;
+
+        TipoDocumento documento = _documentoRepository.findById(documento_id)
+            .orElseThrow(() -> new EntityNotFoundException("TipoDocumento no encontrada con id: " +documento_id));
 
         entity.setCajaApertura(cajaApertura);
+        entity.setTipoPago(pago);
+        entity.setTipoDocumento(documento);
 
         try {
             _repository.findById(id).map(existingEntity -> {
@@ -145,6 +191,8 @@ public class VentaService implements IVentaService {
                 existingEntity.setEstado(entity.getEstado());
                 existingEntity.setFecha(entity.getFecha());
                 existingEntity.setTotal(entity.getTotal());
+                existingEntity.setTipoPago(entity.getTipoPago());
+                existingEntity.setTipoDocumento(entity.getTipoDocumento());
                 return _repository.save(existingEntity);
             });
 

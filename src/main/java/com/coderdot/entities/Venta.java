@@ -28,8 +28,24 @@ public class Venta {
     @JoinColumn(name = "caja_apertura_id", nullable = false)
     private CajaApertura cajaApertura;
 
+    @ManyToOne
+    @JoinColumn(name = "tipo_pago_id", nullable = false)
+    private TipoPago tipoPago;
+
+    @ManyToOne
+    @JoinColumn(name = "tipo_documento_id", nullable = false)
+    private TipoDocumento tipoDocumento;
+
     public String getCliente() {
         return cliente;
+    }
+
+    public TipoDocumento getTipoDocumento() {
+        return tipoDocumento;
+    }
+
+    public TipoPago getTipoPago() {
+        return tipoPago;
     }
 
     public String getDni() {
@@ -46,6 +62,14 @@ public class Venta {
 
     public Date getFecha() {
         return fecha;
+    }
+
+    public void setTipoDocumento(TipoDocumento tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
+    }
+
+    public void setTipoPago(TipoPago tipoPago) {
+        this.tipoPago = tipoPago;
     }
 
     public Long getId() {

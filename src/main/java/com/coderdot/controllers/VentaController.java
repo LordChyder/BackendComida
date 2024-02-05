@@ -17,11 +17,15 @@ import com.coderdot.dto.request.VentaRequest;
 import com.coderdot.entities.CajaApertura;
 import com.coderdot.entities.Pedido;
 import com.coderdot.entities.Sucursal;
+import com.coderdot.entities.TipoDocumento;
+import com.coderdot.entities.TipoPago;
 import com.coderdot.entities.Venta;
 import com.coderdot.models.OperationResult;
 import com.coderdot.services.CajaApertura.CajaAperturaService;
 import com.coderdot.services.Pedido.PedidoService;
 import com.coderdot.services.Sucursal.SucursalService;
+import com.coderdot.services.TipoDocumento.TipoDocumentoService;
+import com.coderdot.services.TipoPago.TipoPagoService;
 import com.coderdot.services.Venta.VentaService;
 
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,13 +42,17 @@ public class VentaController {
     private final SucursalService _sucursalService;
     private final CajaAperturaService _cajaService;
     private final PedidoService _pedidoService;
+    private final TipoPagoService _pagoService;
+    private final TipoDocumentoService _documentoService;
 
     public VentaController(VentaService service, SucursalService sucursalService, CajaAperturaService cajaService,
-    PedidoService pedidoService) {
+    PedidoService pedidoService, TipoDocumentoService documentoService, TipoPagoService pagoService) {
         this._service = service;
         this._sucursalService = sucursalService;
         this._cajaService = cajaService;
         this._pedidoService = pedidoService;
+        this._pagoService = pagoService;
+        this._documentoService = documentoService;
     }
 
     @GetMapping
@@ -99,6 +107,16 @@ public class VentaController {
     @GetMapping("/get/pedidos/{sucursalId}")
     public List<Pedido> getPedidosPorSucursal(@PathVariable Long sucursalId) {
         return _pedidoService.getPedidosActivos(sucursalId);
+    }
+
+    @GetMapping("/get/tipo-pago")
+    public List<TipoPago> getPagos() {
+        return _pagoService.getAll();
+    }
+
+    @GetMapping("/get/tipo-documento")
+    public List<TipoDocumento> getDocumentos() {
+        return _documentoService.getAll();
     }
 
     @PutMapping("/{ventaId}/aprobar")
