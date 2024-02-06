@@ -10,9 +10,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "pedidos")
+@Table(
+    name = "pedidos",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"venta_id", "mesa_id"})
+    }
+)
 public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
