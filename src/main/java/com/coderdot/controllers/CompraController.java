@@ -32,7 +32,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/compras")
-@PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
+@PreAuthorize("@customAuthorizationFilter.hasPermission('COMPRA')")
 @SecurityRequirement(name = "bearerAuth")
 public class CompraController {
 
