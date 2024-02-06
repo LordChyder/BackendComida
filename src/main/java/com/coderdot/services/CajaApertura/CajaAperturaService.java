@@ -111,7 +111,7 @@ public class CajaAperturaService implements ICajaAperturaService {
 
 
     public List<CajaApertura> getCajasAperturadasNoCerradasPorSucursalYUsuario(Long sucursalId, String username) {
-        Date fechaActual = new Date(); // Obtener la fecha actual
+        Date fechaActual = new Date();
         return _repository.findByCerradoFalseAndCajaSucursalIdAndFechaAndUserUsername(sucursalId, fechaActual, username);
     }
 
