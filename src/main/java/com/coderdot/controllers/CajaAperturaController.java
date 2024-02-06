@@ -94,4 +94,4 @@ public class CajaAperturaController {
     public List<Caja> getCajas(@PathVariable Long sucursalId) {
         return _cajaService.getCajasPorSucursal(sucursalId);
     }
-}    
+}

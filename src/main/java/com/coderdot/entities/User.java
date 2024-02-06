@@ -30,6 +30,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<PerfilUser> perfiles;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private Set<UserPermiso> permisos;
+
     public Long getId() {
         return id;
     }
@@ -46,6 +50,10 @@ public class User {
         this.username = username;
     }
 
+    public Set<UserPermiso> getPermisos() {
+        return permisos;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -57,6 +65,10 @@ public class User {
     
     public String getCelular() {
         return celular;
+    }
+
+    public void setPermisos(Set<UserPermiso> permisos) {
+        this.permisos = permisos;
     }
 
     public void setCelular(String celular) {

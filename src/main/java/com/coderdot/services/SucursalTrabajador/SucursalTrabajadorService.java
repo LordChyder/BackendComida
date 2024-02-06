@@ -103,6 +103,10 @@ public class SucursalTrabajadorService implements ISucursalTrabajadorService {
     public List<SucursalTrabajador> getSucursalTrabajadorPorSucursal(Long sucursalId) {
         return _repository.findBySucursalId(sucursalId);
     }
+
+    public List<SucursalTrabajador> getSucursalTrabajadoresByUserName(String username) {
+        return _repository.findByUser_Username(username);
+    }
     
     public MessageResult getResult() {
         return this._messageResult;

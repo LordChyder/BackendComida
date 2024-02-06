@@ -19,7 +19,8 @@ import com.coderdot.models.OperationResult;
 import com.coderdot.models.UserSummary;
 import com.coderdot.services.SucursalTrabajador.SucursalTrabajadorService;
 import com.coderdot.services.User.UserService;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -69,6 +70,12 @@ public class SucursalTrabajadorController {
         boolean result = _service.delete(id);
         
         return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
+
+    @GetMapping("/my/sucursales")
+    public List<SucursalTrabajador> getMySucursales(Authentication authentication) {
+        var user = (UserDetails) authentication.getPrincipal();
+        return _service.getSucursalTrabajadoresByUserName(user.getUsername());
     }
 
     @GetMapping("/sucursal/{sucursalId}")

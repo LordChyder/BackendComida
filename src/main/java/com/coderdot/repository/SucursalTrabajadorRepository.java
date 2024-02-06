@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SucursalTrabajadorRepository extends JpaRepository<SucursalTrabajador, Long> {
     List<SucursalTrabajador> findBySucursalId(Long sucursalId);
+    List<SucursalTrabajador> findByUser_Username(String username);
 }

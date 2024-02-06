@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import com.coderdot.dto.request.SignupRequest;
 import com.coderdot.entities.Perfil;
 import com.coderdot.entities.PerfilUser;
+import com.coderdot.entities.Permiso;
 import com.coderdot.entities.User;
+import com.coderdot.entities.UserPermiso;
 import com.coderdot.models.MessageResult;
 import com.coderdot.models.UserSummary;
 import com.coderdot.repository.UserRepository;
@@ -120,6 +122,23 @@ public class UserService implements IUserService{
             return Collections.emptyList();
         }
     }
+
+    public List<Permiso> getPermisosByUserName(String username) {
+    Optional<User> userOptional = userRepository.findByUsername(username);
+
+    if (userOptional.isPresent()) {
+        User user = userOptional.get();
+        Set<UserPermiso> userPermisoSet = user.getPermisos();
+
+        // Aquí puedes convertir UserPermiso a Permiso o trabajar directamente con UserPermiso según tus necesidades
+        return userPermisoSet.stream()
+                .map(UserPermiso::getPermiso)
+                .collect(Collectors.toList());
+    } else {
+        // Manejo de usuario no encontrado (puedes lanzar una excepción, retornar una lista vacía, etc.)
+        return Collections.emptyList();
+    }
+}
 
     public MessageResult getResult() {
         return this._messageResult;

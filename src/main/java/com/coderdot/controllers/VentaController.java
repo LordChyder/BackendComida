@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -103,6 +105,13 @@ public class VentaController {
     public List<CajaApertura> getCajasAperturadasNoCerradas(@PathVariable Long sucursalId) {
         return _cajaService.getCajasAperturadasNoCerradas(sucursalId);
     }
+
+    @GetMapping("/get/my-cajas/{sucursalId}")
+    public List<CajaApertura> getCajasAperturadasNoCerradas(@PathVariable Long sucursalId, Authentication authentication) {
+        var user = (UserDetails) authentication.getPrincipal();
+        return _cajaService.getCajasAperturadasNoCerradasPorSucursalYUsuario(sucursalId, user.getUsername());
+    }
+
 
     @GetMapping("/get/pedidos/{sucursalId}")
     public List<Pedido> getPedidosPorSucursal(@PathVariable Long sucursalId) {

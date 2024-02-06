@@ -1,5 +1,6 @@
 package com.coderdot.services.CajaApertura;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -106,6 +107,12 @@ public class CajaAperturaService implements ICajaAperturaService {
 
     public List<CajaApertura> getCajasAperturadasNoCerradas(Long sucursalId) {
         return _repository.findByCerradoFalseAndCajaSucursalId(sucursalId);
+    }
+
+
+    public List<CajaApertura> getCajasAperturadasNoCerradasPorSucursalYUsuario(Long sucursalId, String username) {
+        Date fechaActual = new Date(); // Obtener la fecha actual
+        return _repository.findByCerradoFalseAndCajaSucursalIdAndFechaAndUserUsername(sucursalId, fechaActual, username);
     }
 
     public MessageResult getResult() {
