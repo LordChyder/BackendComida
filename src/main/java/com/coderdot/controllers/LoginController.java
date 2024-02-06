@@ -57,8 +57,8 @@ public class LoginController {
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
 
         final List<Perfil> perfil = service.getPerfilesByUserName(userDetails.getUsername());
-
-        return new LoginResponse(jwt, perfil);
+        
+        return new LoginResponse(jwt, perfil, userDetails.getUsername());
     }
 
 }

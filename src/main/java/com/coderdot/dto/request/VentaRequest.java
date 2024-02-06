@@ -13,6 +13,7 @@ public class VentaRequest {
 
     private String cliente;
     private String dni;
+    private String tipo_venta;
     private Date fecha;
     private Number total;
     private Boolean estado;
@@ -21,6 +22,9 @@ public class VentaRequest {
     private Long tipo_pago_id;
     private Long pedido_id;
 
+    public String getTipo_venta() {
+		return tipo_venta;
+	}
 
     public Long getTipo_documento_id() {
         return tipo_documento_id;
@@ -61,6 +65,10 @@ public class VentaRequest {
     public Number getTotal() {
         return total;
     }
+    
+    public void setTipo_venta(String tipo_venta) {
+		this.tipo_venta = tipo_venta;
+	}
 
     public void setCaja_apertura_id(Long caja_apertura_id) {
         this.caja_apertura_id = caja_apertura_id;
@@ -101,6 +109,7 @@ public class VentaRequest {
         venta.setFecha(this.fecha);
         venta.setTotal(this.total);
         venta.setEstado(this.estado);
+        venta.setTipo_venta(this.tipo_venta);
 
         CajaApertura cajaApertura = new CajaApertura();
         cajaApertura.setId(this.caja_apertura_id);

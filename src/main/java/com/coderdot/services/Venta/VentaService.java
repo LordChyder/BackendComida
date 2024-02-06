@@ -193,6 +193,7 @@ public class VentaService implements IVentaService {
                 existingEntity.setTotal(entity.getTotal());
                 existingEntity.setTipoPago(entity.getTipoPago());
                 existingEntity.setTipoDocumento(entity.getTipoDocumento());
+                existingEntity.setTipo_venta(entity.getTipo_venta());
                 return _repository.save(existingEntity);
             });
 

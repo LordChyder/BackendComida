@@ -20,6 +20,7 @@ public class Venta {
 
     private String cliente;
     private String dni;
+    private String tipo_venta;
     private Date fecha;
     private Number total;
     private Boolean estado;
@@ -36,6 +37,10 @@ public class Venta {
     @JoinColumn(name = "tipo_documento_id", nullable = false)
     private TipoDocumento tipoDocumento;
 
+    public String getTipo_venta() {
+		return tipo_venta;
+	}
+    
     public String getCliente() {
         return cliente;
     }
@@ -79,6 +84,10 @@ public class Venta {
     public Number getTotal() {
         return total;
     }
+    
+    public void setTipo_venta(String tipo_venta) {
+		this.tipo_venta = tipo_venta;
+	}
 
     public void setCajaApertura(CajaApertura cajaApertura) {
         this.cajaApertura = cajaApertura;
