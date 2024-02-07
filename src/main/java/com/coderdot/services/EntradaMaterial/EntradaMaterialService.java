@@ -106,6 +106,11 @@ public class EntradaMaterialService implements IEntradaMaterialService {
         }
     }
 
+    
+    public List<EntradaMaterial> obtenerEntradasPorSucursal(Long sucursalId) {
+        return _repository.findByCompraInventarioSucursalId(sucursalId);
+    }
+
     private void agregarCantidadAlStock(Long productoId, Long inventarioId, Integer cantidad) {
         InventarioProducto inventarioProducto = _iprepository
                 .findByProductoIdAndInventarioId(productoId, inventarioId)

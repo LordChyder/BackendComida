@@ -203,6 +203,11 @@ public class VentaService implements IVentaService {
         }
     }
 
+    
+    public List<Venta> obtenerVentasPorSucursal(Long sucursalId) {
+        return _repository.findByCajaAperturaCajaSucursalId(sucursalId);
+    }
+
     public boolean delete(@NonNull Long id) {
         if (_repository.existsById(id)) {
             _repository.deleteById(id);

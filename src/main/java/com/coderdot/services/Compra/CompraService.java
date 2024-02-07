@@ -121,6 +121,10 @@ public class CompraService implements ICompraService {
             return false;
         }
     }
+    
+    public List<Compra> obtenerComprasPorSucursal(Long sucursalId) {
+        return _repository.findByInventarioSucursalId(sucursalId);
+    }
 
     @Transactional
     public boolean setClose(Long compraId) {

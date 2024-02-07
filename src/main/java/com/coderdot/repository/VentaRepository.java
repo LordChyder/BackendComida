@@ -22,6 +22,12 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
     @Query("SELECT cd FROM Venta cd WHERE cd.id = :ventaId")
     Venta findYesById(@Param("ventaId") Long ventaId);
 
+    List<Venta> findByCajaAperturaCajaSucursalId(Long sucursalId);
+
+
+
+
+
     List<Venta> findByFechaAndTipoPago_IdAndTipoDocumento_Id(Date fecha, Long tipoPagoId, Long tipoDocumentoId);
 
     List<Venta> findByFecha(Date fecha);

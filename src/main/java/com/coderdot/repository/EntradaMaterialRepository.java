@@ -15,4 +15,6 @@ public interface EntradaMaterialRepository extends JpaRepository<EntradaMaterial
     List<EntradaMaterial> findByCompra_Inventario_Id(Long inventarioId);
 
     List<EntradaMaterial> findByFecha(Date fecha);
+
+    List<EntradaMaterial> findByCompraInventarioSucursalId(Long sucursalId);
 }
