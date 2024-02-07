@@ -58,6 +58,8 @@ public class PedidoService implements IPedidoService {
             entity.setSucursal(sucursal);
 
             _repository.save(entity);
+            
+            _messageResult.addMessage(entity.getId().toString());
             return true;
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -88,6 +90,20 @@ public class PedidoService implements IPedidoService {
                 existingEntity.setFecha(entity.getFecha());
                 existingEntity.setN_personas(entity.getN_personas());
                 existingEntity.setSucursal(entity.getSucursal());
+                return _repository.save(existingEntity);
+            });
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean updateTrabajador(@NonNull Long id,  Pedido entity) {
+
+        try {
+            _repository.findById(id).map(existingEntity -> {
+                existingEntity.setN_personas(entity.getN_personas());
                 return _repository.save(existingEntity);
             });
 

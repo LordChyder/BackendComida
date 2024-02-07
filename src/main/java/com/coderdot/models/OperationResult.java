@@ -21,10 +21,18 @@ public class OperationResult {
     public static ResponseEntity getOperationResult(Boolean success, List<String> messages) {
         OperationResult operationResult = new OperationResult(success, messages);
 
-        if (messages.size() == 0) {
-            return ResponseEntity.ok(operationResult);
+        if (success) {
+            if (messages.size() == 0) {
+                return ResponseEntity.ok(operationResult);
+            } else {
+                return ResponseEntity.ok(operationResult);
+            }
         } else {
-            return ResponseEntity.badRequest().body(operationResult);
+            if (messages.size() == 0) {
+                return ResponseEntity.ok(operationResult);
+            } else {
+                return ResponseEntity.badRequest().body(operationResult);
+            }
         }
     }
 

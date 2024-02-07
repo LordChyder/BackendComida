@@ -1,6 +1,5 @@
 package com.coderdot.services.Compra;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -144,7 +143,7 @@ public class CompraService implements ICompraService {
             Compra compra = new Compra();
             compra.setEntrada(entity.getEntrada());
             compra.setEstado(entity.getEstado());
-            compra.setFecha(new Date());
+            compra.setFecha(entity.getFecha());
             compra.setInventario(inventario);
             compra.setProveedor(proveedor);
             compra.setTotal(entity.getTotal());
@@ -167,6 +166,7 @@ public class CompraService implements ICompraService {
                 .orElseThrow(() -> new EntityNotFoundException("Inventario no encontrada con id: " + entity.getInventario_id()));
     
             _repository.findById(id).map(existingEntity -> {
+                existingEntity.setFecha(entity.getFecha());
                 existingEntity.setEntrada(entity.getEntrada());
                 existingEntity.setEstado(entity.getEstado());
                 existingEntity.setTotal(entity.getTotal());
@@ -195,6 +195,10 @@ public class CompraService implements ICompraService {
     
     public List<Compra> obtenerComprasEntradaFalseYEstadoTrue() {
         return _repository.findByEntradaFalseAndEstadoTrue();
+    }
+    
+    public List<Compra> obtenerComprasEntradaFalseAndEstadoTrueAndInventarioSucursalId(Long sucursalId) {
+        return _repository.findByEntradaFalseAndEstadoTrueAndInventarioSucursalId(sucursalId);
     }
 
     public MessageResult getResult() {

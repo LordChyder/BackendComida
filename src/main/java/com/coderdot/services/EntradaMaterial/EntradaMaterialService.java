@@ -70,8 +70,6 @@ public class EntradaMaterialService implements IEntradaMaterialService {
             _repository.save(entity);
             return true;
         } catch (Exception e) {
-            System.out.println("--------------------------");
-            System.out.println(e);
             return false;
         }
     }
@@ -87,18 +85,33 @@ public class EntradaMaterialService implements IEntradaMaterialService {
         try {
             _repository.findById(id).map(existingEntity -> {
                 existingEntity.setFecha(entity.getFecha());
-                existingEntity.setCompra(entity.getCompra());
                 return _repository.save(existingEntity);
             });
 
             return true;
         } catch (Exception e) {
+
             return false;
         }
     }
 
     public boolean delete(@NonNull Long id) {
         if (_repository.existsById(id)) {
+
+            EntradaMaterial entrada = _repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Compra no encontrada con id: " +id));
+
+            List<CompraDetalle> detalles = _compraDetalleRepository.findByCompraId(entrada.getCompra().getId());
+
+            for (CompraDetalle detalle : detalles) {
+                Long producto_id = detalle.getProducto().getId();
+                Long inventario_id = entrada.getCompra().getInventario().getId();
+
+                reducirCantidadAlStock(producto_id, inventario_id, detalle.getUnidad());
+            }
+
+            _compraRepository.actualizarEntradaAFalse(entrada.getCompra().getId());
+
             _repository.deleteById(id);
             return true;
         } else {
@@ -117,6 +130,17 @@ public class EntradaMaterialService implements IEntradaMaterialService {
                 .orElseThrow(() -> new RuntimeException("InventarioProducto no encontrado con productoId: " + productoId + " e inventarioId: " + inventarioId));
 
         int nuevoStock = inventarioProducto.getStock() + cantidad;
+        inventarioProducto.setStock(nuevoStock);
+
+        _iprepository.save(inventarioProducto);
+    }
+
+    private void reducirCantidadAlStock(Long productoId, Long inventarioId, Integer cantidad) {
+        InventarioProducto inventarioProducto = _iprepository
+                .findByProductoIdAndInventarioId(productoId, inventarioId)
+                .orElseThrow(() -> new RuntimeException("InventarioProducto no encontrado con productoId: " + productoId + " e inventarioId: " + inventarioId));
+
+        int nuevoStock = inventarioProducto.getStock() - cantidad;
         inventarioProducto.setStock(nuevoStock);
 
         _iprepository.save(inventarioProducto);

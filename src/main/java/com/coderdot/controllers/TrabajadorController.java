@@ -18,13 +18,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coderdot.dto.request.CompraDetalleRequest;
+import com.coderdot.dto.request.EntradaMaterialRequest;
+import com.coderdot.dto.request.PedidoDetalleRequest;
 import com.coderdot.dto.request.TrabajadorCompraRequest;
+import com.coderdot.dto.request.TrabajadorPedidoRequest;
+import com.coderdot.dto.response.MesaPedidoDTO;
+import com.coderdot.dto.response.PedidoDetalleDTO;
 import com.coderdot.entities.CajaApertura;
 import com.coderdot.entities.Compra;
 import com.coderdot.entities.CompraDetalle;
 import com.coderdot.entities.EntradaMaterial;
 import com.coderdot.entities.Inventario;
 import com.coderdot.entities.InventarioProducto;
+import com.coderdot.entities.Pedido;
+import com.coderdot.entities.PedidoDetalle;
 import com.coderdot.entities.Proveedor;
 import com.coderdot.entities.SucursalComida;
 import com.coderdot.entities.SucursalTrabajador;
@@ -35,6 +42,9 @@ import com.coderdot.services.Compra.CompraService;
 import com.coderdot.services.CompraDetalle.CompraDetalleService;
 import com.coderdot.services.EntradaMaterial.EntradaMaterialService;
 import com.coderdot.services.InventarioProducto.InventarioProductoService;
+import com.coderdot.services.Mesa.MesaService;
+import com.coderdot.services.Pedido.PedidoService;
+import com.coderdot.services.PedidoDetalle.PedidoDetalleService;
 import com.coderdot.services.Inventario.InventarioService;
 import com.coderdot.services.Proveedor.ProveedorService;
 import com.coderdot.services.SucursalComida.SucursalComidaService;
@@ -60,12 +70,16 @@ public class TrabajadorController {
     private final EntradaMaterialService _entradaMaterialService;
     private final ProveedorService _proveedorService;
     private final CompraDetalleService _compraDetalleService;
+    private final MesaService _mesaService;  
+    private final PedidoService _pedidoService;  
+    private final PedidoDetalleService _pedidoDetalleService;  
 
     public TrabajadorController(SucursalTrabajadorService sucursalTrabajadorService, 
         CajaAperturaService cajaAperturaService, SucursalComidaService sucursalComidaService,
         InventarioService inventarioService, CompraService compraService, VentaService ventaService,
         EntradaMaterialService entradaMaterialService, ProveedorService proveedorService,
-        CompraDetalleService compraDetalleService, InventarioProductoService inventarioProductoService) {
+        CompraDetalleService compraDetalleService, InventarioProductoService inventarioProductoService,
+        MesaService mesaService, PedidoService pedidoService, PedidoDetalleService pedidoDetalleService) {
         this._sucursalTrabajadorService = sucursalTrabajadorService;
         this._cajaAperturaService = cajaAperturaService;
         this._sucursalComidaService = sucursalComidaService;
@@ -76,7 +90,11 @@ public class TrabajadorController {
         this._proveedorService = proveedorService;
         this._inventarioProductoService = inventarioProductoService;
         this._compraDetalleService = compraDetalleService;
+        this._mesaService = mesaService;
+        this._pedidoService = pedidoService;
+        this._pedidoDetalleService = pedidoDetalleService;
     }
+    //#region GETS
 
     @GetMapping("/proveedores")
     public List<Proveedor> getProveedores() {
@@ -111,7 +129,85 @@ public class TrabajadorController {
         return _inventarioService.getInventarioBySucursalId(sucursalId);
     }
 
+    //#endregion
+
+    //#region PEDIDOS
+    @GetMapping("/mesas/sucursal/{sucursalId}")
+    public List<MesaPedidoDTO> getMesasPorSucursal(@PathVariable Long sucursalId) {
+        return _mesaService.getMesasConPedidosPorSucursal(sucursalId);
+    }
+
+    @GetMapping("/pedidos/byId/{id}")
+    public ResponseEntity<Pedido> getPedidoById(@NonNull @PathVariable Long id) {
+        return _pedidoService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/pedidos")
+    public ResponseEntity<?> createPedido(@RequestBody TrabajadorPedidoRequest  entity ) {
+        boolean result = _pedidoService.create(entity.toPedido());
+        
+        return OperationResult.getOperationResult(result, _pedidoService.getResult().getMessages());
+    }
+
+    @PutMapping("/pedidos/{id}")
+    public ResponseEntity<Boolean> updatePedido(@NonNull @PathVariable Long id, @RequestBody TrabajadorPedidoRequest entity) {
+        boolean result = _pedidoService.updateTrabajador(id, entity.toPedido());
+
+        return OperationResult.getOperationResult(result, _pedidoService.getResult().getMessages());
+    }
+
+    @DeleteMapping("/pedidos/{id}")
+    public ResponseEntity<Void> deletePedido(@NonNull @PathVariable Long id) {
+        
+        boolean result = _pedidoService.delete(id);
+        
+        return OperationResult.getOperationResult(result, _pedidoService.getResult().getMessages());
+    }
+
+    @PutMapping("/pedidos/{pedidoId}/aprobar")
+    public ResponseEntity<Boolean> aprobarPedido(@PathVariable Long pedidoId) {
+        boolean result = _pedidoService.setClose(pedidoId);
+        
+        return OperationResult.getOperationResult(result, _pedidoService.getResult().getMessages());
+    }
+
+    @GetMapping("/pedidos-detalles/byId/{id}")
+    public ResponseEntity<PedidoDetalle> getPedidoDetalleById(@NonNull @PathVariable Long id) {
+        return _pedidoDetalleService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/pedidos-detalles/{pedidoId}")
+    public List<PedidoDetalleDTO> getPedidoDetallePorPedido(@PathVariable Long pedidoId) {
+        return _pedidoDetalleService.findPedidoDetalleWithPrecioByPedidoId(pedidoId);
+    }
+
+    @PostMapping("/pedidos-detalles")
+    public ResponseEntity<?> createPedidoDetalle(@RequestBody PedidoDetalleRequest  entity ) {
+        boolean result = _pedidoDetalleService.create(entity.toPedidoDetalle());
+        
+        return OperationResult.getOperationResult(result, _pedidoDetalleService.getResult().getMessages());
+    }
+
+    @PutMapping("/pedidos-detalles/{id}")
+    public ResponseEntity<Boolean> updatePedidoDetalle(@NonNull @PathVariable Long id, @RequestBody PedidoDetalleRequest entity) {
+        boolean result = _pedidoDetalleService.update(id, entity.toPedidoDetalle());
+
+        return OperationResult.getOperationResult(result, _pedidoDetalleService.getResult().getMessages());
+    }
+
+    @DeleteMapping("/pedidos-detalles/{id}")
+    public ResponseEntity<Void> deletePedidoDetalle(@NonNull @PathVariable Long id) {
+        
+        boolean result = _pedidoDetalleService.delete(id);
+        
+        return OperationResult.getOperationResult(result, _pedidoDetalleService.getResult().getMessages());
+    }
     
+    //#endregion
 
     @GetMapping("/ventas/{sucursalId}")
     public List<Venta> getVentas(@PathVariable Long sucursalId) {
@@ -201,8 +297,45 @@ public class TrabajadorController {
     }
     //#endregion
 
+    //#region ENTRADAS
     @GetMapping("/entradas/{sucursalId}")
     public List<EntradaMaterial> getEntradas(@PathVariable Long sucursalId) {
         return _entradaMaterialService.obtenerEntradasPorSucursal(sucursalId);
     }
+    
+    @GetMapping("/entradas/byId/{id}")
+    public ResponseEntity<EntradaMaterial> getById(@NonNull @PathVariable Long id) {
+        return _entradaMaterialService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/entradas")
+    public ResponseEntity<?> create(@RequestBody EntradaMaterialRequest  entity ) {
+        boolean result = _entradaMaterialService.create(entity.toEntradaMaterial());
+
+        return OperationResult.getOperationResult(result, _entradaMaterialService.getResult().getMessages());
+    }
+
+    @PutMapping("/entradas/{id}")
+    public ResponseEntity<Boolean> update(@NonNull @PathVariable Long id, @RequestBody EntradaMaterialRequest entity) {
+        
+        boolean result = _entradaMaterialService.update(id,  entity.toEntradaMaterial());
+        
+        return OperationResult.getOperationResult(result, _entradaMaterialService.getResult().getMessages());
+    }
+
+    @DeleteMapping("/entradas/{id}")
+    public ResponseEntity<Void> delete(@NonNull @PathVariable Long id) {
+        boolean result = _entradaMaterialService.delete(id);
+        
+        return OperationResult.getOperationResult(result, _entradaMaterialService.getResult().getMessages());
+    }
+
+    @GetMapping("/entradas/compras/{id}/no-entradas-y-aprobadas")
+    public List<Compra> obtenerComprasEntradaFalseYEstadoTrue(@NonNull @PathVariable Long id) {
+        return _compraService.obtenerComprasEntradaFalseAndEstadoTrueAndInventarioSucursalId(id);
+    }
+
+    //#endregion
 }

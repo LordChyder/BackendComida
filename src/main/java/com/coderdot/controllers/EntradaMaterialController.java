@@ -72,7 +72,6 @@ public class EntradaMaterialController {
         return OperationResult.getOperationResult(result, _service.getResult().getMessages());
     }
 
-    
     @GetMapping("/get/no-entradas-y-aprobadas")
     public List<Compra> obtenerComprasEntradaFalseYEstadoTrue() {
         return _cService.obtenerComprasEntradaFalseYEstadoTrue();

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.coderdot.entities.Sucursal;
 import com.coderdot.models.MessageResult;
+import com.coderdot.dto.response.MesaPedidoDTO;
 import com.coderdot.entities.Mesa;
 import com.coderdot.repository.MesaRepository;
 import com.coderdot.repository.SucursalRepository;
@@ -81,6 +82,10 @@ public class MesaService implements IMesaService {
         } else {
             return false;
         }
+    }
+
+    public List<MesaPedidoDTO> getMesasConPedidosPorSucursal(Long sucursalId) {
+        return _repository.findBySucursalIdWithFilteredPedidos(sucursalId);
     }
 
     public List<Mesa> getMesasPorSucursal(Long sucursalId) {

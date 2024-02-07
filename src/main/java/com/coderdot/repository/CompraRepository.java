@@ -20,9 +20,15 @@ public interface CompraRepository extends JpaRepository<Compra, Long> {
 
     List<Compra> findByEntradaFalseAndEstadoTrue();
 
+    List<Compra> findByEntradaFalseAndEstadoTrueAndInventarioSucursalId(Long sucursalId);
+
     @Modifying
     @Query("UPDATE Compra c SET c.entrada = true WHERE c.id = :compraId")
     void actualizarEntradaATrue(@Param("compraId") Long compraId);
+    
+    @Modifying
+    @Query("UPDATE Compra c SET c.entrada = false  WHERE c.id = :compraId")
+    void actualizarEntradaAFalse(@Param("compraId") Long compraId);
 
     List<Compra> findByInventarioSucursalId(Long sucursalId);
 
