@@ -1,14 +1,18 @@
 package com.coderdot.services.Compra;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coderdot.entities.User;
 import com.coderdot.models.MessageResult;
+import com.coderdot.dto.request.TrabajadorCompraRequest;
 import com.coderdot.entities.Compra;
 import com.coderdot.entities.Inventario;
 import com.coderdot.entities.Proveedor;
@@ -20,6 +24,7 @@ import com.coderdot.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
+@SuppressWarnings("null")
 @Service
 public class CompraService implements ICompraService {
 
@@ -122,6 +127,61 @@ public class CompraService implements ICompraService {
         }
     }
     
+    public boolean createByTrabajador(@NonNull TrabajadorCompraRequest entity) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        try {
+
+            User user =  _userRepository.findByUsername(authentication.getName())
+            .orElseThrow(() -> new EntityNotFoundException("User no encontrada con id: " + authentication.getName()));;
+
+            Proveedor proveedor = _proveedorRepository.findById(entity.getProveedor_id())
+                .orElseThrow(() -> new EntityNotFoundException("User no encontrada con id: " + entity.getProveedor_id() ));
+
+            Inventario inventario = _inventarioRepository.findById(entity.getInventario_id())
+                .orElseThrow(() -> new EntityNotFoundException("Inventario no encontrada con id: " + entity.getInventario_id()));
+    
+            Compra compra = new Compra();
+            compra.setEntrada(entity.getEntrada());
+            compra.setEstado(entity.getEstado());
+            compra.setFecha(new Date());
+            compra.setInventario(inventario);
+            compra.setProveedor(proveedor);
+            compra.setTotal(entity.getTotal());
+            compra.setUser(user);
+
+            _repository.save(compra);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean updateByTrabajador(@NonNull Long id, @NonNull TrabajadorCompraRequest entity) {
+
+        try {
+            Proveedor proveedor = _proveedorRepository.findById(entity.getProveedor_id())
+                .orElseThrow(() -> new EntityNotFoundException("User no encontrada con id: " + entity.getProveedor_id() ));
+
+            Inventario inventario = _inventarioRepository.findById(entity.getInventario_id())
+                .orElseThrow(() -> new EntityNotFoundException("Inventario no encontrada con id: " + entity.getInventario_id()));
+    
+            _repository.findById(id).map(existingEntity -> {
+                existingEntity.setEntrada(entity.getEntrada());
+                existingEntity.setEstado(entity.getEstado());
+                existingEntity.setTotal(entity.getTotal());
+                existingEntity.setProveedor(proveedor);
+                existingEntity.setInventario(inventario);
+                return _repository.save(existingEntity);
+            });
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
     public List<Compra> obtenerComprasPorSucursal(Long sucursalId) {
         return _repository.findByInventarioSucursalId(sucursalId);
     }
