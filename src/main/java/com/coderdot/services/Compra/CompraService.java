@@ -150,6 +150,7 @@ public class CompraService implements ICompraService {
             compra.setUser(user);
 
             _repository.save(compra);
+            _messageResult.addOnlyMessage(compra.getId().toString());
             return true;
         } catch (Exception e) {
             return false;

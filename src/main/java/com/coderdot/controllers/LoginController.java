@@ -73,7 +73,7 @@ public class LoginController {
             trabajador = true;
         }
 
-        return new LoginResponse(jwt, perfil, userDetails.getUsername(), permisos, trabajador);
+        return new LoginResponse(jwt, perfil, userDetails.getUsername(), permisos, trabajador, sucursalTrabajador);
     }
 
 }
