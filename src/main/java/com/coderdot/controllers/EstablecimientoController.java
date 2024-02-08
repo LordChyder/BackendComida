@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/establecimientos")
-@PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
+//@PreAuthorize("@customAuthorizationFilter.hasPermission('MANTENIMIENTO')")
 @SecurityRequirement(name = "bearerAuth")
 public class EstablecimientoController {
 

@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/categorias")
-@PreAuthorize("@customAuthorizationFilter.hasPermission('ALMACEN')")
+//@PreAuthorize("@customAuthorizationFilter.hasPermission('ALMACEN')")
 @SecurityRequirement(name = "bearerAuth")
 public class CategoriaController {
 

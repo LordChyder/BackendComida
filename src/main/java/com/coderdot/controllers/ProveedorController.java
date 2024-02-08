@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/proveedores")
-@PreAuthorize("@customAuthorizationFilter.hasPermission('COMPRA')")
+//@PreAuthorize("@customAuthorizationFilter.hasPermission('COMPRA')")
 @SecurityRequirement(name = "bearerAuth")
 public class ProveedorController {
 

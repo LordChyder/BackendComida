@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/productos")
-@PreAuthorize("@customAuthorizationFilter.hasPermission('ALMACEN')")
+//@PreAuthorize("@customAuthorizationFilter.hasPermission('ALMACEN')")
 @SecurityRequirement(name = "bearerAuth")
 public class ProductoController {
 

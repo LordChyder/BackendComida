@@ -23,4 +23,13 @@ public class MessageResult {
     public void addMessage(String newMessage) {
         messages.add(newMessage);
     }
+
+    public void addOnlyMessage(String newMessage) {
+        this.messages = new ArrayList<>();
+        messages.add(newMessage);
+    }
+    
+    public void clearMessage() {
+        this.messages = new ArrayList<>();
+    }
 }

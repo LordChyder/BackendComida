@@ -20,9 +20,15 @@ public class EntradaMaterial {
 
     private Date fecha;
 
+    private Date fecha_vencimiento;
+
     @ManyToOne
     @JoinColumn(name = "compra_id", nullable = false)
     private Compra compra;
+
+    public Date getFecha_vencimiento() {
+        return fecha_vencimiento;
+    }
 
     public Compra getCompra() {
         return compra;
@@ -34,6 +40,10 @@ public class EntradaMaterial {
 
     public Long getId() {
         return id;
+    }
+
+    public void setFecha_vencimiento(Date fecha_vencimiento) {
+        this.fecha_vencimiento = fecha_vencimiento;
     }
 
     public void setCompra(Compra compra) {

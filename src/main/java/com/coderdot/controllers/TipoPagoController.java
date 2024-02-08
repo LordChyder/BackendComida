@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/tipos-pagos")
-@PreAuthorize("@customAuthorizationFilter.hasPermission('VENTA')")
+//@PreAuthorize("@customAuthorizationFilter.hasPermission('VENTA')")
 @SecurityRequirement(name = "bearerAuth")
 public class TipoPagoController {
 

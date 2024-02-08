@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/perfiles")
-@PreAuthorize("@customAuthorizationFilter.hasPermission('SEGURIDAD')")
+//@PreAuthorize("@customAuthorizationFilter.hasPermission('SEGURIDAD')")
 @SecurityRequirement(name = "bearerAuth")
 public class PerfilController {
 

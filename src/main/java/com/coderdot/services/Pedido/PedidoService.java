@@ -31,6 +31,8 @@ public class PedidoService implements IPedidoService {
         this._mesaRepository = mesaRepository;
         this._messageResult = messageResult;
         this._sucursalRepository = sucursalRepository;
+
+        this._messageResult.clearMessage();
     }
 
     public List<Pedido> getAll() {
@@ -59,7 +61,7 @@ public class PedidoService implements IPedidoService {
 
             _repository.save(entity);
             
-            _messageResult.addMessage(entity.getId().toString());
+            _messageResult.addOnlyMessage(entity.getId().toString());
             return true;
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -126,6 +128,14 @@ public class PedidoService implements IPedidoService {
     @Transactional
     public boolean setClose(Long pedidoId) {
         _repository.actualizarEstado(pedidoId);
+        
+        return true;
+    }
+    
+
+    @Transactional
+    public boolean actualizarAnulado(Long pedidoId) {
+        _repository.actualizarAnulado(pedidoId);
         
         return true;
     }

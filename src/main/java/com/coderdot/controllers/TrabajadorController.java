@@ -56,7 +56,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/trabajador")
-@PreAuthorize("@customAuthorizationFilter.isTrabajador()")
+//@PreAuthorize("@customAuthorizationFilter.isTrabajador()")
 @SecurityRequirement(name = "bearerAuth")
 public class TrabajadorController {
 
@@ -173,6 +173,13 @@ public class TrabajadorController {
         return OperationResult.getOperationResult(result, _pedidoService.getResult().getMessages());
     }
 
+    @PutMapping("/pedidos/{pedidoId}/anular")
+    public ResponseEntity<Boolean> anularPedido(@PathVariable Long pedidoId) {
+        boolean result = _pedidoService.actualizarAnulado(pedidoId);
+        
+        return OperationResult.getOperationResult(result, _pedidoService.getResult().getMessages());
+    }
+    
     @GetMapping("/pedidos-detalles/byId/{id}")
     public ResponseEntity<PedidoDetalle> getPedidoDetalleById(@NonNull @PathVariable Long id) {
         return _pedidoDetalleService.getById(id)
