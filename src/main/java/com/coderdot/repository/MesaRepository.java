@@ -17,4 +17,9 @@ public interface MesaRepository extends JpaRepository<Mesa, Long> {
            "ON (p.mesa.id = m.id AND p.venta IS NULL AND p.anulado = false) " +
            "WHERE m.sucursal.id = ?1")
     List<MesaPedidoDTO> findBySucursalIdWithFilteredPedidos(Long sucursalId);
+
+    @Query("SELECT new com.coderdot.dto.response.MesaPedidoDTO(m, p) FROM Mesa m JOIN Pedido p " +
+           "ON (p.mesa.id = m.id AND p.venta IS NULL AND p.anulado = false AND p.estado = true) " +
+           "WHERE m.sucursal.id = ?1")
+    List<MesaPedidoDTO> findBySucursalIdWithVentaFilteredPedidos(Long sucursalId);
 }

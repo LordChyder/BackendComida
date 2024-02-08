@@ -17,10 +17,15 @@ public class VentaRequest {
     private Date fecha;
     private Number total;
     private Boolean estado;
+    private Boolean anulado;
     private Long caja_apertura_id;
     private Long tipo_documento_id;
     private Long tipo_pago_id;
     private Long pedido_id;
+
+    public Boolean getAnulado() {
+        return anulado;
+    }
 
     public String getTipo_venta() {
 		return tipo_venta;
@@ -66,6 +71,10 @@ public class VentaRequest {
         return total;
     }
     
+    public void setAnulado(Boolean anulado) {
+        this.anulado = anulado;
+    }
+    
     public void setTipo_venta(String tipo_venta) {
 		this.tipo_venta = tipo_venta;
 	}
@@ -109,6 +118,7 @@ public class VentaRequest {
         venta.setFecha(this.fecha);
         venta.setTotal(this.total);
         venta.setEstado(this.estado);
+        venta.setAnulado(this.anulado);
         venta.setTipo_venta(this.tipo_venta);
 
         CajaApertura cajaApertura = new CajaApertura();

@@ -10,14 +10,24 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "caja_apertura")
+@Table(
+    name = "caja_apertura",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id", "fecha"}),
+        @UniqueConstraint(columnNames = {"caja_id", "fecha"})
+    }
+)
 public class CajaApertura {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Temporal(TemporalType.DATE)
     private Date fecha;
 
     private Number total;

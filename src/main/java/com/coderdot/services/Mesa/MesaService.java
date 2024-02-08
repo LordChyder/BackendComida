@@ -88,6 +88,10 @@ public class MesaService implements IMesaService {
         return _repository.findBySucursalIdWithFilteredPedidos(sucursalId);
     }
 
+    public List<MesaPedidoDTO> getVentasMesasConPedidosPorSucursal(Long sucursalId) {
+        return _repository.findBySucursalIdWithVentaFilteredPedidos(sucursalId);
+    }
+
     public List<Mesa> getMesasPorSucursal(Long sucursalId) {
         return _repository.findBySucursalId(sucursalId);
     }

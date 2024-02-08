@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.coderdot.entities.User;
 import com.coderdot.models.MessageResult;
@@ -112,7 +113,16 @@ public class CajaAperturaService implements ICajaAperturaService {
 
     public List<CajaApertura> getCajasAperturadasNoCerradasPorSucursalYUsuario(Long sucursalId, String username) {
         Date fechaActual = new Date();
+        System.out.println("----------------");
+        System.out.println(fechaActual);
         return _repository.findByCerradoFalseAndCajaSucursalIdAndFechaAndUserUsername(sucursalId, fechaActual, username);
+    }
+    
+    @Transactional
+    public boolean setClose(Long compraId) {
+        _repository.actualizarEstado(compraId);
+        
+        return true;
     }
 
     public MessageResult getResult() {

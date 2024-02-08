@@ -94,4 +94,10 @@ public class CajaAperturaController {
     public List<Caja> getCajas(@PathVariable Long sucursalId) {
         return _cajaService.getCajasPorSucursal(sucursalId);
     }
+    @PutMapping("/{cajaAId}/cerrar")
+    public ResponseEntity<Boolean> aprobarCompra(@PathVariable Long cajaAId) {
+        boolean result = _service.setClose(cajaAId);
+        
+        return OperationResult.getOperationResult(result, _service.getResult().getMessages());
+    }
 }

@@ -61,6 +61,7 @@ public class CajaAperturaRequest {
     public @NonNull CajaApertura toCajaApertura() {
         CajaApertura cajaApertura = new CajaApertura();
         cajaApertura.setCerrado(this.cerrado);
+        System.out.println(this.fecha);
         cajaApertura.setFecha(this.fecha);
         cajaApertura.setTotal(this.total);
         

@@ -18,6 +18,9 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
     @Query("UPDATE Venta c SET c.estado = true WHERE c.id = :ventaId")
     void actualizarEstado(@Param("ventaId") Long ventaId);
 
+    @Modifying
+    @Query("UPDATE Venta c SET c.anulado = true WHERE c.id = :ventaId")
+    void actualizarAnular(@Param("ventaId") Long ventaId);
     
     @Query("SELECT cd FROM Venta cd WHERE cd.id = :ventaId")
     Venta findYesById(@Param("ventaId") Long ventaId);

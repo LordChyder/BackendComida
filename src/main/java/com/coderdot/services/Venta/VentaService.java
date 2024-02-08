@@ -1,6 +1,7 @@
 package com.coderdot.services.Venta;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,6 +89,37 @@ public class VentaService implements IVentaService {
             return false;
         }
     }
+
+    public boolean createByTrabajador(@NonNull Venta entity) {
+        try {
+            entity.setFecha(new Date());
+            
+            Long cajaApertura_id = entity.getCajaApertura().getId() != null ? entity.getCajaApertura().getId() : 0;
+    
+            CajaApertura cajaApertura = _cajaAperturaRepository.findById(cajaApertura_id)
+                .orElseThrow(() -> new EntityNotFoundException("CajaApertura no encontrada con id: " +cajaApertura_id));
+
+            Long pago_id = entity.getTipoPago().getId() != null ? entity.getTipoPago().getId() : 0;
+
+            TipoPago pago = _pagoRepository.findById(pago_id)
+                .orElseThrow(() -> new EntityNotFoundException("TipoPago no encontrada con id: " +pago_id));
+
+            Long documento_id = entity.getTipoPago().getId() != null ? entity.getTipoPago().getId() : 0;
+
+            TipoDocumento documento = _documentoRepository.findById(documento_id)
+                .orElseThrow(() -> new EntityNotFoundException("TipoDocumento no encontrada con id: " +documento_id));
+    
+            entity.setCajaApertura(cajaApertura);
+            entity.setTipoPago(pago);
+            entity.setTipoDocumento(documento);
+
+            _repository.save(entity);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
     
     public boolean createWithPedido(@NonNull Venta entity, Long pedido_id) {
         try {
@@ -118,6 +150,8 @@ public class VentaService implements IVentaService {
     
 
             entity.setEstado(true);
+
+            entity.setAnulado(false);
 
             List<Object[]> detalles = _pedidoDetalleRepository.findPedidoDetalleWithPrecioByPedidoId(pedido.getId());
             List<PedidoDetalleDTO> dtos = new ArrayList<>();
@@ -203,6 +237,43 @@ public class VentaService implements IVentaService {
         }
     }
 
+    public boolean updateByTrabajador(@NonNull Long id,  Venta entity) {
+
+        Long cajaApertura_id = entity.getCajaApertura().getId() != null ? entity.getCajaApertura().getId() : 0;
+
+        CajaApertura cajaApertura = _cajaAperturaRepository.findById(cajaApertura_id)
+            .orElseThrow(() -> new EntityNotFoundException("CajaApertura no encontrada con id: " +cajaApertura_id));
+
+        Long pago_id = entity.getTipoPago().getId() != null ? entity.getTipoPago().getId() : 0;
+
+        TipoPago pago = _pagoRepository.findById(pago_id)
+            .orElseThrow(() -> new EntityNotFoundException("TipoPago no encontrada con id: " +pago_id));
+
+        Long documento_id = entity.getTipoPago().getId() != null ? entity.getTipoPago().getId() : 0;
+
+        TipoDocumento documento = _documentoRepository.findById(documento_id)
+            .orElseThrow(() -> new EntityNotFoundException("TipoDocumento no encontrada con id: " +documento_id));
+
+        entity.setCajaApertura(cajaApertura);
+        entity.setTipoPago(pago);
+        entity.setTipoDocumento(documento);
+
+        try {
+            _repository.findById(id).map(existingEntity -> {
+                existingEntity.setCliente(entity.getCliente());
+                existingEntity.setDni(entity.getDni());
+                existingEntity.setTotal(entity.getTotal());
+                existingEntity.setTipoPago(entity.getTipoPago());
+                existingEntity.setTipoDocumento(entity.getTipoDocumento());
+                existingEntity.setTipo_venta(entity.getTipo_venta());
+                return _repository.save(existingEntity);
+            });
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
     
     public List<Venta> obtenerVentasPorSucursal(Long sucursalId) {
         return _repository.findByCajaAperturaCajaSucursalId(sucursalId);
@@ -230,6 +301,25 @@ public class VentaService implements IVentaService {
         
         Float totalFloat = (venta.getTotal() instanceof Float) ? (Float) venta.getTotal() : venta.getTotal().floatValue();
         cajaApertura.setTotal(cajaApertura.getTotal().floatValue() + totalFloat);
+
+        _cajaAperturaRepository.save(cajaApertura);
+        
+        return true;
+    }
+    
+    @Transactional
+    public boolean setAnular(Long ventaId) {
+        _repository.actualizarAnular(ventaId);
+
+        Venta venta = _repository.findYesById(ventaId);
+        
+        Long cajaApertura_id = venta.getCajaApertura().getId() != null ? venta.getCajaApertura().getId() : 0;
+    
+        CajaApertura cajaApertura = _cajaAperturaRepository.findById(cajaApertura_id)
+            .orElseThrow(() -> new EntityNotFoundException("CajaApertura no encontrada con id: " +cajaApertura_id));
+        
+        Float totalFloat = (venta.getTotal() instanceof Float) ? (Float) venta.getTotal() : venta.getTotal().floatValue();
+        cajaApertura.setTotal(cajaApertura.getTotal().floatValue() - totalFloat);
 
         _cajaAperturaRepository.save(cajaApertura);
         

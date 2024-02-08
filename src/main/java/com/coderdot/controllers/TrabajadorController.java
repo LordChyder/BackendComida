@@ -22,6 +22,8 @@ import com.coderdot.dto.request.EntradaMaterialRequest;
 import com.coderdot.dto.request.PedidoDetalleRequest;
 import com.coderdot.dto.request.TrabajadorCompraRequest;
 import com.coderdot.dto.request.TrabajadorPedidoRequest;
+import com.coderdot.dto.request.VentaDetalleRequest;
+import com.coderdot.dto.request.VentaRequest;
 import com.coderdot.dto.response.MesaPedidoDTO;
 import com.coderdot.dto.response.PedidoDetalleDTO;
 import com.coderdot.entities.CajaApertura;
@@ -35,7 +37,10 @@ import com.coderdot.entities.PedidoDetalle;
 import com.coderdot.entities.Proveedor;
 import com.coderdot.entities.SucursalComida;
 import com.coderdot.entities.SucursalTrabajador;
+import com.coderdot.entities.TipoDocumento;
+import com.coderdot.entities.TipoPago;
 import com.coderdot.entities.Venta;
+import com.coderdot.entities.VentaDetalle;
 import com.coderdot.models.OperationResult;
 import com.coderdot.services.CajaApertura.CajaAperturaService;
 import com.coderdot.services.Compra.CompraService;
@@ -49,7 +54,10 @@ import com.coderdot.services.Inventario.InventarioService;
 import com.coderdot.services.Proveedor.ProveedorService;
 import com.coderdot.services.SucursalComida.SucursalComidaService;
 import com.coderdot.services.SucursalTrabajador.SucursalTrabajadorService;
+import com.coderdot.services.TipoDocumento.TipoDocumentoService;
+import com.coderdot.services.TipoPago.TipoPagoService;
 import com.coderdot.services.Venta.VentaService;
+import com.coderdot.services.VentaDetalle.VentaDetalleService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -72,14 +80,19 @@ public class TrabajadorController {
     private final CompraDetalleService _compraDetalleService;
     private final MesaService _mesaService;  
     private final PedidoService _pedidoService;  
-    private final PedidoDetalleService _pedidoDetalleService;  
+    private final PedidoDetalleService _pedidoDetalleService; 
+    private final VentaDetalleService _ventaDetalleService;
+    private final TipoPagoService _tipoPagoService;
+    private final TipoDocumentoService _tipoDocumentoService;
 
     public TrabajadorController(SucursalTrabajadorService sucursalTrabajadorService, 
         CajaAperturaService cajaAperturaService, SucursalComidaService sucursalComidaService,
         InventarioService inventarioService, CompraService compraService, VentaService ventaService,
         EntradaMaterialService entradaMaterialService, ProveedorService proveedorService,
         CompraDetalleService compraDetalleService, InventarioProductoService inventarioProductoService,
-        MesaService mesaService, PedidoService pedidoService, PedidoDetalleService pedidoDetalleService) {
+        MesaService mesaService, PedidoService pedidoService, PedidoDetalleService pedidoDetalleService,
+        VentaDetalleService ventaDetalleService,TipoPagoService tipoPagoService,
+        TipoDocumentoService tipoDocumentoService) {
         this._sucursalTrabajadorService = sucursalTrabajadorService;
         this._cajaAperturaService = cajaAperturaService;
         this._sucursalComidaService = sucursalComidaService;
@@ -93,6 +106,9 @@ public class TrabajadorController {
         this._mesaService = mesaService;
         this._pedidoService = pedidoService;
         this._pedidoDetalleService = pedidoDetalleService;
+        this._ventaDetalleService = ventaDetalleService;
+        this._tipoDocumentoService = tipoDocumentoService;
+        this._tipoPagoService = tipoPagoService;
     }
     //#region GETS
 
@@ -116,6 +132,9 @@ public class TrabajadorController {
     @GetMapping("/cajas/{sucursalId}")
     public List<CajaApertura> getCajasAperturadasNoCerradas(@PathVariable Long sucursalId, Authentication authentication) {
         var user = (UserDetails) authentication.getPrincipal();
+        System.out.println("----------------");
+        System.out.println(sucursalId);
+        System.out.println(user.getUsername());
         return _cajaAperturaService.getCajasAperturadasNoCerradasPorSucursalYUsuario(sucursalId, user.getUsername());
     }
 
@@ -127,6 +146,16 @@ public class TrabajadorController {
     @GetMapping("/inventarios/{sucursalId}")
     public List<Inventario> getAllInventariosBySucursal(@PathVariable Long sucursalId) {
         return _inventarioService.getInventarioBySucursalId(sucursalId);
+    }
+
+    @GetMapping("/tipos-pago")
+    public List<TipoPago> getPagos() {
+        return _tipoPagoService.obtenerActivos();
+    }
+
+    @GetMapping("/tipos-documento")
+    public List<TipoDocumento> getDocumentos() {
+        return _tipoDocumentoService.obtenerActivos();
     }
 
     //#endregion
@@ -216,6 +245,12 @@ public class TrabajadorController {
     
     //#endregion
 
+    //#region VENTAS
+    @GetMapping("/ventas/mesas/sucursal/{sucursalId}")
+    public List<MesaPedidoDTO> getVentasMesasPorSucursal(@PathVariable Long sucursalId) {
+        return _mesaService.getVentasMesasConPedidosPorSucursal(sucursalId);
+    }
+
     @GetMapping("/ventas/{sucursalId}")
     public List<Venta> getVentas(@PathVariable Long sucursalId) {
         return _ventaService.obtenerVentasPorSucursal(sucursalId);
@@ -226,6 +261,89 @@ public class TrabajadorController {
     public Optional<Venta> getVentaById(@PathVariable Long ventaId) {
         return _ventaService.getById(ventaId);
     }
+
+    @SuppressWarnings("null")
+    @PostMapping("/ventas")
+    public ResponseEntity<?> createVenta(@RequestBody VentaRequest entity) {
+        
+        if (entity.getPedido_id() == null) {
+            boolean result = _ventaService.createByTrabajador(entity.toVenta());
+            return OperationResult.getOperationResult(result, _ventaService.getResult().getMessages());
+        } else {
+            boolean result = _ventaService.createWithPedido(entity.toVenta(), entity.getPedido_id());
+            return OperationResult.getOperationResult(result, _ventaService.getResult().getMessages());
+        }
+    }
+
+    @PutMapping("/ventas/{id}")
+    public ResponseEntity<?> updateVenta(@NonNull @PathVariable Long id, @RequestBody VentaRequest entity) {
+
+        boolean result = _ventaService.updateByTrabajador(id, entity.toVenta());
+
+        return OperationResult.getOperationResult(result, _ventaService.getResult().getMessages());
+    }
+
+    @PutMapping("/ventas/{compraId}/aprobar")
+    public ResponseEntity<Boolean> aprobarVenta(@PathVariable Long compraId) {
+        boolean result = _ventaService.setClose(compraId);
+        
+        return OperationResult.getOperationResult(result, _ventaService.getResult().getMessages());
+    }
+
+    @PutMapping("/ventas/{compraId}/anular")
+    public ResponseEntity<Boolean> anularVenta(@PathVariable Long compraId) {
+        boolean result = _ventaService.setAnular(compraId);
+        
+        return OperationResult.getOperationResult(result, _ventaService.getResult().getMessages());
+    }
+
+    @DeleteMapping("/ventas/{id}")
+    public ResponseEntity<Void> deleteVenta(@NonNull @PathVariable Long id) {
+        boolean result = _ventaService.delete(id);
+        
+        return OperationResult.getOperationResult(result, _ventaService.getResult().getMessages());
+    }
+
+    @GetMapping("ventas/pedidos/{sucursalId}")
+    public List<Pedido> getPedidosPorSucursal(@PathVariable Long sucursalId) {
+        return _pedidoService.getPedidosActivos(sucursalId);
+    }
+
+    @GetMapping("/ventas-detalle/byId/{id}")
+    public ResponseEntity<VentaDetalle> getVentaDetalleById(@NonNull @PathVariable Long id) {
+        return _ventaDetalleService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/ventas-detalle/venta/{ventaId}")
+    public List<VentaDetalle> getVentaDetallePorVenta(@PathVariable Long ventaId) {
+        return _ventaDetalleService.getDetallePorVenta(ventaId);
+    }
+
+    @PostMapping("/ventas-detalle")
+    public ResponseEntity<?> createVentaDetalle(@RequestBody VentaDetalleRequest  entity ) {
+        boolean result = _ventaDetalleService.create(entity.toVentaDetalle());
+
+        return OperationResult.getOperationResult(result, _ventaDetalleService.getResult().getMessages());
+    }
+
+    @PutMapping("/ventas-detalle/{id}")
+    public ResponseEntity<Boolean> updateVentaDetalle(@NonNull @PathVariable Long id, @RequestBody VentaDetalleRequest entity) {
+        
+        boolean result = _ventaDetalleService.update(id, entity.toVentaDetalle());
+
+        return OperationResult.getOperationResult(result, _ventaDetalleService.getResult().getMessages());
+    }
+
+    @DeleteMapping("/ventas-detalle/{id}")
+    public ResponseEntity<Void> deleteVentaDetalle(@NonNull @PathVariable Long id) {
+        boolean result = _ventaDetalleService.delete(id);
+
+        return OperationResult.getOperationResult(result, _ventaDetalleService.getResult().getMessages());
+    }
+
+    //#endregion
 
     //#region COMPRA
 

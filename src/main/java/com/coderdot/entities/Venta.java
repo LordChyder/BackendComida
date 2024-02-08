@@ -24,6 +24,7 @@ public class Venta {
     private Date fecha;
     private Number total;
     private Boolean estado;
+    private Boolean anulado;
 
     @ManyToOne
     @JoinColumn(name = "caja_apertura_id", nullable = false)
@@ -65,6 +66,10 @@ public class Venta {
         return estado;
     }
 
+    public Boolean getAnulado() {
+        return anulado;
+    }
+
     public Date getFecha() {
         return fecha;
     }
@@ -83,6 +88,10 @@ public class Venta {
 
     public Number getTotal() {
         return total;
+    }
+
+    public void setAnulado(Boolean anulado) {
+        this.anulado = anulado;
     }
     
     public void setTipo_venta(String tipo_venta) {
