@@ -39,6 +39,7 @@ import com.coderdot.entities.SucursalComida;
 import com.coderdot.entities.SucursalTrabajador;
 import com.coderdot.entities.TipoDocumento;
 import com.coderdot.entities.TipoPago;
+import com.coderdot.entities.User;
 import com.coderdot.entities.Venta;
 import com.coderdot.entities.VentaDetalle;
 import com.coderdot.models.OperationResult;
@@ -56,6 +57,7 @@ import com.coderdot.services.SucursalComida.SucursalComidaService;
 import com.coderdot.services.SucursalTrabajador.SucursalTrabajadorService;
 import com.coderdot.services.TipoDocumento.TipoDocumentoService;
 import com.coderdot.services.TipoPago.TipoPagoService;
+import com.coderdot.services.User.UserService;
 import com.coderdot.services.Venta.VentaService;
 import com.coderdot.services.VentaDetalle.VentaDetalleService;
 
@@ -84,6 +86,7 @@ public class TrabajadorController {
     private final VentaDetalleService _ventaDetalleService;
     private final TipoPagoService _tipoPagoService;
     private final TipoDocumentoService _tipoDocumentoService;
+    private final UserService _userService;
 
     public TrabajadorController(SucursalTrabajadorService sucursalTrabajadorService, 
         CajaAperturaService cajaAperturaService, SucursalComidaService sucursalComidaService,
@@ -92,7 +95,8 @@ public class TrabajadorController {
         CompraDetalleService compraDetalleService, InventarioProductoService inventarioProductoService,
         MesaService mesaService, PedidoService pedidoService, PedidoDetalleService pedidoDetalleService,
         VentaDetalleService ventaDetalleService,TipoPagoService tipoPagoService,
-        TipoDocumentoService tipoDocumentoService) {
+        TipoDocumentoService tipoDocumentoService,
+        UserService userService) {
         this._sucursalTrabajadorService = sucursalTrabajadorService;
         this._cajaAperturaService = cajaAperturaService;
         this._sucursalComidaService = sucursalComidaService;
@@ -109,12 +113,19 @@ public class TrabajadorController {
         this._ventaDetalleService = ventaDetalleService;
         this._tipoDocumentoService = tipoDocumentoService;
         this._tipoPagoService = tipoPagoService;
+        this._userService = userService;
     }
     //#region GETS
 
     @GetMapping("/proveedores")
     public List<Proveedor> getProveedores() {
         return _proveedorService.obtenerProveedoresActivos();
+    }
+
+    @GetMapping("/usuario")
+    public Optional<User> getUsuario(Authentication authentication) {
+        var user = (UserDetails) authentication.getPrincipal();
+        return _userService.getUserNameByName(user.getUsername());
     }
 
     @GetMapping("/sucursales")

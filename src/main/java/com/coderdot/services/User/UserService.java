@@ -41,6 +41,10 @@ public class UserService implements IUserService{
         return userRepository.findUserSummaryById(id);
     }
 
+    public Optional<User> getUserNameByName(String id) {
+        return userRepository.findByUsername(id);
+    }
+
     public boolean createUser( SignupRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             this._messageResult.addMessage("Mensaje 1");
