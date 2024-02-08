@@ -20,6 +20,7 @@ public class Producto {
     private String descripcion;
     private String caracteristica;
     private String codigo;
+    private Boolean estado;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
@@ -27,6 +28,10 @@ public class Producto {
 
     public Long getId() {
         return id;
+    }
+
+    public Boolean getEstado() {
+        return estado;
     }
 
     public String getNombre() {
@@ -39,6 +44,10 @@ public class Producto {
 
     public String getDescripcion() {
         return descripcion;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
     }
 
     public void setDescripcion(String descripcion) {

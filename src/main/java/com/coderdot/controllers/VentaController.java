@@ -120,12 +120,12 @@ public class VentaController {
 
     @GetMapping("/get/tipo-pago")
     public List<TipoPago> getPagos() {
-        return _pagoService.getAll();
+        return _pagoService.obtenerActivos();
     }
 
     @GetMapping("/get/tipo-documento")
     public List<TipoDocumento> getDocumentos() {
-        return _documentoService.getAll();
+        return _documentoService.obtenerActivos();
     }
 
     @PutMapping("/{ventaId}/aprobar")

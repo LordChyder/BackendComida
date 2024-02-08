@@ -65,6 +65,7 @@ public class ProductoService implements IProductoService {
                 existingEntity.setDescripcion(entity.getDescripcion());
                 existingEntity.setCaracteristica(entity.getCaracteristica());
                 existingEntity.setCodigo(entity.getCodigo());
+                existingEntity.setEstado(entity.getEstado());
                 existingEntity.setCategoria(categoria);
     
                 return _repository.save(existingEntity);
@@ -87,5 +88,9 @@ public class ProductoService implements IProductoService {
     
     public MessageResult getResult() {
         return this._messageResult;
+    }
+
+    public List<Producto> obtenerActivos() {
+        return _repository.findByEstadoTrue();
     }
 }

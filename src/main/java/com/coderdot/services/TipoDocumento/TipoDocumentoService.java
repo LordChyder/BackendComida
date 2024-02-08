@@ -62,6 +62,10 @@ public class TipoDocumentoService implements ITipoDocumentoService {
             return false;
         }
     }
+
+    public List<TipoDocumento> obtenerActivos() {
+        return _repository.findByEstadoTrue();
+    }
     
     public MessageResult getResult() {
         return this._messageResult;

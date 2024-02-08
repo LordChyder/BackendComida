@@ -98,7 +98,7 @@ public class TrabajadorController {
 
     @GetMapping("/proveedores")
     public List<Proveedor> getProveedores() {
-        return _proveedorService.getAll();
+        return _proveedorService.obtenerProveedoresActivos();
     }
 
     @GetMapping("/sucursales")

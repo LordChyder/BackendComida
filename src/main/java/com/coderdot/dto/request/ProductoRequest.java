@@ -9,8 +9,13 @@ public class ProductoRequest {
     private String caracteristica;
     private String codigo;
     private Long categoria_id;
+    private Boolean estado;
 
     // Getters y setters
+
+    public Boolean getEstado() {
+        return estado;
+    }
 
     public String getNombre() {
         return nombre;
@@ -25,6 +30,10 @@ public class ProductoRequest {
 
     public void setCodigo(String codigo) {
         this.codigo = codigo;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
     }
 
     public String getCaracteristica() {
@@ -57,7 +66,8 @@ public class ProductoRequest {
         producto.setDescripcion(this.descripcion);
         producto.setCaracteristica(this.caracteristica);
         producto.setCodigo(this.codigo);
-
+        producto.setEstado(this.estado);
+        
         Categoria categoria = new Categoria();
         categoria.setId(this.categoria_id);
         producto.setCategoria(categoria);

@@ -50,7 +50,7 @@ public class InventarioProductoController {
 
     @GetMapping("/get/productos")
     public List<Producto> getAllProductos() {
-        return _pService.getAll();
+        return _pService.obtenerActivos();
     }
 
     @GetMapping

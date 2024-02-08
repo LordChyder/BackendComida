@@ -65,6 +65,10 @@ public class ProveedorService implements IProveedorService {
             return false;
         }
     }
+
+    public List<Proveedor> obtenerProveedoresActivos() {
+        return _repository.findByEstadoTrue();
+    }
     
     public MessageResult getResult() {
         return this._messageResult;

@@ -66,4 +66,8 @@ public class TipoPagoService implements ITipoPagoService {
     public MessageResult getResult() {
         return this._messageResult;
     }
+
+    public List<TipoPago> obtenerActivos() {
+        return _repository.findByEstadoTrue();
+    }
 }
