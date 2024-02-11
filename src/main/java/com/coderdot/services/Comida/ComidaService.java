@@ -63,6 +63,10 @@ public class ComidaService implements IComidaService {
             return false;
         }
     }
+
+    public List<Comida> obtenerComidasNoEnSucursal(Long sucursalId) {
+        return _repository.findComidasNotInSucursal(sucursalId);
+    }
     
     public MessageResult getResult() {
         return this._messageResult;

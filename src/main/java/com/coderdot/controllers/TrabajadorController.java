@@ -1,5 +1,6 @@
 package com.coderdot.controllers;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -294,16 +295,23 @@ public class TrabajadorController {
         return OperationResult.getOperationResult(result, _ventaService.getResult().getMessages());
     }
 
-    @PutMapping("/ventas/{compraId}/aprobar")
-    public ResponseEntity<Boolean> aprobarVenta(@PathVariable Long compraId) {
-        boolean result = _ventaService.setClose(compraId);
+    @PutMapping("/ventas/{ventaId}/aprobar")
+    public ResponseEntity<Boolean> aprobarVenta(@PathVariable Long ventaId) {
+        boolean result = _ventaService.setClose(ventaId);
         
         return OperationResult.getOperationResult(result, _ventaService.getResult().getMessages());
     }
 
-    @PutMapping("/ventas/{compraId}/anular")
-    public ResponseEntity<Boolean> anularVenta(@PathVariable Long compraId) {
-        boolean result = _ventaService.setAnular(compraId);
+    @PutMapping("/ventas/{ventaId}/anular")
+    public ResponseEntity<Boolean> anularVenta(@PathVariable Long ventaId) {
+        boolean result = _ventaService.setAnular(ventaId);
+        
+        return OperationResult.getOperationResult(result, _ventaService.getResult().getMessages());
+    }
+
+    @PutMapping("/ventas/{ventaId}/noanular")
+    public ResponseEntity<Boolean> noAnularVenta(@PathVariable Long ventaId) {
+        boolean result = _ventaService.setNoAnular(ventaId);
         
         return OperationResult.getOperationResult(result, _ventaService.getResult().getMessages());
     }
@@ -313,6 +321,13 @@ public class TrabajadorController {
         boolean result = _ventaService.delete(id);
         
         return OperationResult.getOperationResult(result, _ventaService.getResult().getMessages());
+    }
+
+    
+    @GetMapping("/ventas/por-dia-y-sucursal/{sucursalId}")
+    public List<Venta> obtenerVentasPorDiaYSucursal(@PathVariable Long sucursalId) {
+        Date fechaHoy = new Date();
+        return _ventaService.obtenerVentasPorDiaYSucursal(fechaHoy, sucursalId);
     }
 
     @GetMapping("ventas/pedidos/{sucursalId}")

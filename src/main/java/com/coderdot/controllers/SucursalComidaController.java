@@ -80,9 +80,9 @@ public class SucursalComidaController {
         return _service.getComidaPorSucursal(sucursalId);
     }
 
-    @GetMapping("/get/comidas")
-    public List<Comida> getComidas() {
-        return _comidaService.getAll();
+    @GetMapping("/get/comidas/{sucursalId}")
+    public List<Comida> getComidas(@PathVariable Long sucursalId) {
+        return _comidaService.obtenerComidasNoEnSucursal(sucursalId);
     }
 
     @GetMapping("/get/sucursales")

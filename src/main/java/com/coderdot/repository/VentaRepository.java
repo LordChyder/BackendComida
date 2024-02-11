@@ -21,13 +21,18 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
     @Modifying
     @Query("UPDATE Venta c SET c.anulado = true WHERE c.id = :ventaId")
     void actualizarAnular(@Param("ventaId") Long ventaId);
+
+    @Modifying
+    @Query("UPDATE Venta c SET c.anulado = false WHERE c.id = :ventaId")
+    void actualizarAnularFalse(@Param("ventaId") Long ventaId);
     
     @Query("SELECT cd FROM Venta cd WHERE cd.id = :ventaId")
     Venta findYesById(@Param("ventaId") Long ventaId);
 
     List<Venta> findByCajaAperturaCajaSucursalId(Long sucursalId);
 
-
+    @Query("SELECT v FROM Venta v WHERE v.fecha >= :fechaInicio AND v.fecha < :fechaFin AND v.cajaApertura.caja.sucursal.id = :sucursalId")
+    List<Venta> findByFechaBetweenAndSucursal(Date fechaInicio, Date fechaFin, Long sucursalId);
 
 
 

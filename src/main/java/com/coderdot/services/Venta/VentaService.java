@@ -1,6 +1,7 @@
 package com.coderdot.services.Venta;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -73,7 +74,7 @@ public class VentaService implements IVentaService {
             TipoPago pago = _pagoRepository.findById(pago_id)
                 .orElseThrow(() -> new EntityNotFoundException("TipoPago no encontrada con id: " +pago_id));
 
-            Long documento_id = entity.getTipoPago().getId() != null ? entity.getTipoPago().getId() : 0;
+            Long documento_id = entity.getTipoDocumento().getId() != null ? entity.getTipoDocumento().getId() : 0;
 
             TipoDocumento documento = _documentoRepository.findById(documento_id)
                 .orElseThrow(() -> new EntityNotFoundException("TipoDocumento no encontrada con id: " +documento_id));
@@ -279,6 +280,23 @@ public class VentaService implements IVentaService {
         return _repository.findByCajaAperturaCajaSucursalId(sucursalId);
     }
 
+    
+
+    public List<Venta> obtenerVentasPorDiaYSucursal(Date fecha, Long sucursalId) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fecha);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        Date fechaInicio = cal.getTime();
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        Date fechaFin = cal.getTime();
+
+        return _repository.findByFechaBetweenAndSucursal(fechaInicio, fechaFin, sucursalId);
+    }
+
     public boolean delete(@NonNull Long id) {
         if (_repository.existsById(id)) {
             _repository.deleteById(id);
@@ -320,6 +338,25 @@ public class VentaService implements IVentaService {
         
         Float totalFloat = (venta.getTotal() instanceof Float) ? (Float) venta.getTotal() : venta.getTotal().floatValue();
         cajaApertura.setTotal(cajaApertura.getTotal().floatValue() - totalFloat);
+
+        _cajaAperturaRepository.save(cajaApertura);
+        
+        return true;
+    }
+    
+    @Transactional
+    public boolean setNoAnular(Long ventaId) {
+        _repository.actualizarAnularFalse(ventaId);
+
+        Venta venta = _repository.findYesById(ventaId);
+        
+        Long cajaApertura_id = venta.getCajaApertura().getId() != null ? venta.getCajaApertura().getId() : 0;
+    
+        CajaApertura cajaApertura = _cajaAperturaRepository.findById(cajaApertura_id)
+            .orElseThrow(() -> new EntityNotFoundException("CajaApertura no encontrada con id: " +cajaApertura_id));
+        
+        Float totalFloat = (venta.getTotal() instanceof Float) ? (Float) venta.getTotal() : venta.getTotal().floatValue();
+        cajaApertura.setTotal(cajaApertura.getTotal().floatValue() + totalFloat);
 
         _cajaAperturaRepository.save(cajaApertura);
         

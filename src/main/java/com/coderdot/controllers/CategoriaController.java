@@ -40,6 +40,11 @@ public class CategoriaController {
         return _service.getAll();
     }
 
+    @GetMapping("/get/true")
+    public List<Categoria> getEstadoTrue() {
+        return _service.getEstadoTrue();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Categoria> getById(@NonNull @PathVariable Long id) {
         return _service.getById(id)

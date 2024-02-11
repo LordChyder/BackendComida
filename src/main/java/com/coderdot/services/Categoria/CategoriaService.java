@@ -26,6 +26,10 @@ public class CategoriaService implements ICategoriaService {
         return _repository.findAll();
     }
 
+    public List<Categoria> getEstadoTrue() {
+        return _repository.findByEstadoTrue();
+    }
+
     public Optional<Categoria> getById(@NonNull Long id) {
         return _repository.findById(id);
     }
@@ -44,6 +48,7 @@ public class CategoriaService implements ICategoriaService {
         try {
             _repository.findById(id).map(existingEntity -> {
                 existingEntity.setNombre(entity.getNombre());
+                existingEntity.setEstado(entity.getEstado());
                 return _repository.save(existingEntity);
             });
 
