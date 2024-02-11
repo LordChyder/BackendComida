@@ -3,6 +3,7 @@ package com.coderdot.entities;
 
 import java.util.Date;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,14 +21,15 @@ public class EntradaMaterial {
 
     private Date fecha;
 
-    private Date fecha_vencimiento;
+    @Column(name = "fecha_vencimiento") 
+    private Date fechaVencimiento; 
 
     @ManyToOne
     @JoinColumn(name = "compra_id", nullable = false)
     private Compra compra;
 
-    public Date getFecha_vencimiento() {
-        return fecha_vencimiento;
+    public Date getFechaVencimiento() {
+        return fechaVencimiento;
     }
 
     public Compra getCompra() {
@@ -42,8 +44,8 @@ public class EntradaMaterial {
         return id;
     }
 
-    public void setFecha_vencimiento(Date fecha_vencimiento) {
-        this.fecha_vencimiento = fecha_vencimiento;
+    public void setFechaVencimiento(Date fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
     }
 
     public void setCompra(Compra compra) {

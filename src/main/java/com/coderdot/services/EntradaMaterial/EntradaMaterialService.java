@@ -85,7 +85,7 @@ public class EntradaMaterialService implements IEntradaMaterialService {
         try {
             _repository.findById(id).map(existingEntity -> {
                 existingEntity.setFecha(entity.getFecha());
-                existingEntity.setFecha_vencimiento(entity.getFecha_vencimiento());
+                existingEntity.setFechaVencimiento(entity.getFechaVencimiento());
                 return _repository.save(existingEntity);
             });
 

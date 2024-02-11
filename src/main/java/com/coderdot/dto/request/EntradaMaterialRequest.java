@@ -10,7 +10,7 @@ import com.coderdot.entities.Compra;
 public class EntradaMaterialRequest {
 
     private Date fecha;
-    private Date fecha_vencimiento;
+    private Date fechaVencimiento;
     private Long compra_id;
 
     public Long getCompra_id() {
@@ -21,12 +21,12 @@ public class EntradaMaterialRequest {
         return fecha;
     }
 
-    public Date getFecha_vencimiento() {
-        return fecha_vencimiento;
+    public Date getFechaVencimiento() {
+        return fechaVencimiento;
     }
 
-    public void setFecha_vencimiento(Date fecha_vencimiento) {
-        this.fecha_vencimiento = fecha_vencimiento;
+    public void setFechaVencimiento(Date fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
     }
     
     public void setCompra_id(Long compra_id) {
@@ -40,7 +40,7 @@ public class EntradaMaterialRequest {
     public @NonNull EntradaMaterial toEntradaMaterial() {
         EntradaMaterial entradaMaterial = new EntradaMaterial();
         entradaMaterial.setFecha(this.fecha);
-        entradaMaterial.setFecha_vencimiento(this.fecha_vencimiento);
+        entradaMaterial.setFechaVencimiento(this.fechaVencimiento);
         
         Compra compra = new Compra();
         compra.setId(this.compra_id);

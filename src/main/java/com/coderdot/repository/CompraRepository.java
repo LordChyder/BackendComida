@@ -33,33 +33,48 @@ public interface CompraRepository extends JpaRepository<Compra, Long> {
     List<Compra> findByInventarioSucursalId(Long sucursalId);
 
 
-    
+
     List<Compra> findByInventario_Id(Long inventarioId);
-
+    
     List<Compra> findByProveedor_Id(Long proveedorId);
-
-    List<Compra> findByUser_Id(Long userId);
-
-    List<Compra> findByFecha(Date fecha);
-
-    List<Compra> findByFechaAndInventario_Id(Date fecha, Long inventarioId);
-
-    List<Compra> findByFechaAndProveedor_Id(Date fecha, Long proveedorId);
-
-    List<Compra> findByFechaAndUser_Id(Date fecha, Long userId);
-
+    
+    @Query("SELECT c FROM Compra c WHERE DATE(c.fecha) > DATE(:fechaInicio)")
+    List<Compra> findByFechaAfter(Date fechaInicio);
+    
+    
+    @Query("SELECT c FROM Compra c WHERE DATE(c.fecha) < DATE(:fechaFin)")
+    List<Compra> findByFechaBefore(Date fechaFin);
+    
     List<Compra> findByInventario_IdAndProveedor_Id(Long inventarioId, Long proveedorId);
+    
 
-    List<Compra> findByInventario_IdAndUser_Id(Long inventarioId, Long userId);
+    @Query("SELECT c FROM Compra c WHERE DATE(c.fecha) > DATE(:fechaInicio) AND c.inventario.id = :inventarioId")
+    List<Compra> findByFechaAfterAndInventario_Id(Date fechaInicio, Long inventarioId);
 
-    List<Compra> findByProveedor_IdAndUser_Id(Long proveedorId, Long userId);
+    @Query("SELECT c FROM Compra c WHERE DATE(c.fecha) < DATE(:fechaFin) AND c.inventario.id = :inventarioId")
+    List<Compra> findByFechaBeforeAndInventario_Id(Date fechaFin, Long inventarioId);
 
-    List<Compra> findByFechaAndInventario_IdAndProveedor_Id(Date fecha, Long inventarioId, Long proveedorId);
+    @Query("SELECT c FROM Compra c WHERE DATE(c.fecha) > DATE(:fechaInicio) AND c.proveedor.id = :proveedorId")
+    List<Compra> findByFechaAfterAndProveedor_Id(Date fechaInicio, Long proveedorId);
 
-    List<Compra> findByFechaAndInventario_IdAndUser_Id(Date fecha, Long inventarioId, Long userId);
+    @Query("SELECT c FROM Compra c WHERE DATE(c.fecha) < DATE(:fechaFin) AND c.proveedor.id = :proveedorId")
+    List<Compra> findByFechaBeforeAndProveedor_Id(Date fechaFin, Long proveedorId);
 
-    List<Compra> findByFechaAndProveedor_IdAndUser_Id(Date fecha, Long proveedorId, Long userId);
+    @Query("SELECT c FROM Compra c WHERE DATE(c.fecha) BETWEEN DATE(:fechaInicio) AND DATE(:fechaFin)")
+    List<Compra> findByFechaBetween(Date fechaInicio, Date fechaFin);
+    
+    @Query("SELECT c FROM Compra c WHERE DATE(c.fecha) > DATE(:fechaInicio) AND c.inventario.id = :inventarioId AND c.proveedor.id = :proveedorId")
+    List<Compra> findByFechaAfterAndFechaAndInventario_IdAndProveedor_Id(Date fechaInicio, Long inventarioId, Long proveedorId);
+    
+    @Query("SELECT c FROM Compra c WHERE DATE(c.fecha) BETWEEN DATE(:fechaInicio) AND DATE(:fechaFin) AND c.inventario.id = :inventarioId")
+    List<Compra> findByFechaBetweenAndInventario_Id(Date fechaInicio, Date fechaFin, Long inventarioId);
+    
+    @Query("SELECT c FROM Compra c WHERE DATE(c.fecha) < DATE(:fechaFin) AND c.inventario.id = :inventarioId AND c.proveedor.id = :proveedorId")
+    List<Compra> findByFechaBeforeAndFechaAndInventario_IdAndProveedor_Id(Date fechaFin, Long inventarioId, Long proveedorId);
 
-    List<Compra> findByFechaAndInventario_IdAndProveedor_IdAndUser_Id(
-            Date fecha, Long inventarioId, Long proveedorId, Long userId);
+    @Query("SELECT c FROM Compra c WHERE DATE(c.fecha) BETWEEN DATE(:fechaInicio) AND DATE(:fechaFin) AND c.proveedor.id = :proveedorId")
+    List<Compra> findByFechaBetweenAndProveedor_Id(Date fechaInicio, Date fechaFin, Long proveedorId);
+    
+    @Query("SELECT c FROM Compra c WHERE DATE(c.fecha) BETWEEN DATE(:fechaInicio) AND DATE(:fechaFin) AND c.proveedor.id = :proveedorId AND c.inventario.id = :inventarioId")
+    List<Compra> findByFechaBetweenrAndInventario_IdAndProveedor_Id(Date fechaInicio, Date fechaFin, Long inventarioId, Long proveedorId);
 }

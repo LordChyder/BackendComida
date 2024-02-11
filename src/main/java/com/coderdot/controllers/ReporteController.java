@@ -72,25 +72,27 @@ public class ReporteController {
 
     @GetMapping("/venta")
     public List<Venta> generarReporteVenta(
-            @RequestParam(name = "fecha", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha,
+            @RequestParam(name = "fechaInicio", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaInicio,
+            @RequestParam(name = "fechaFin", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaFin,
             @RequestParam(name = "tipoPagoId", required = false) Long tipoPagoId,
             @RequestParam(name = "tipoDocumentoId", required = false) Long tipoDocumentoId) {
-        return reporteService.generarReporteVenta(fecha, tipoPagoId, tipoDocumentoId);
+        return reporteService.generarReporteVenta(fechaInicio, fechaFin, tipoPagoId, tipoDocumentoId);
     }
     
     @GetMapping("/compra")
     public List<Compra> generarReporteCompra(
             @RequestParam(required = false) Long inventarioId,
             @RequestParam(required = false) Long proveedorId,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha,
-            @RequestParam(required = false) Long userId) {
-        return reporteService.generarReporteCompra(inventarioId, proveedorId, fecha, userId);
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaInicio,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaFin) {
+        return reporteService.generarReporteCompra(inventarioId, proveedorId, fechaInicio, fechaFin);
     }
 
     @GetMapping("/almacen")
     public List<EntradaMaterial> generarReporteEntradaMaterial(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha_vencimiento,
             @RequestParam(required = false) Long inventarioId) {
-        return reporteService.generarReporteEntradaMaterial(fecha, inventarioId);
+        return reporteService.generarReporteEntradaMaterial(fecha, fecha_vencimiento, inventarioId);
     }
 }
